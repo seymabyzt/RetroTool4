@@ -1,5 +1,6 @@
 Seyma
-
+// Login componentinde Link kullanarak route işlemi yapıyoruz fakar "roomID" chat sayfamıza gelmiyot.
+// propsu karşılayamdık...
 
 Hasan
 
