@@ -1,8 +1,8 @@
-import styles from './Column.module.css'
+import React from 'react'
 
 const Column = () => {
   return (
-    <div className={styles.main}>Column</div>
+    <div>Column</div>
   )
 }
 
