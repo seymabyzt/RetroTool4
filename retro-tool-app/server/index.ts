@@ -1,7 +1,7 @@
-import express from "express";
-import cors from "cors";
-import http from "http";
-import { Server } from "socket.io";
+import express from "express"
+import cors from "cors"
+import http from "http"
+import { Server } from "socket.io"
 
 const app = express()
 app.use(cors())
@@ -16,13 +16,13 @@ const io = new Server(server, {
 })
 
 io.on("connection", (socket) => {
-    console.log(socket.id)
     socket.on("roomID", (data) => {
         socket.join(data)
+        // console.log(socket.id + " joined the room:", data)
     })
 
     socket.on("messageContent", (data) => {
-        socket.to(data.roomID).emit("messageReturn", data) // messageReturn: client tarafında karşılanacak
+        socket.to(data.roomID).emit("messageReturn", data)
     })
 })
 

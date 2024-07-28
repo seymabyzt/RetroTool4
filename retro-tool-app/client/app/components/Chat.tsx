@@ -1,7 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
 
-
 interface ChatProps {
     username: string,
     roomID: string,
@@ -9,23 +8,24 @@ interface ChatProps {
 }
 
 interface Message {
-    username: string;
-    message: string;
-    roomID: string;
-    date: string;
+    username: string,
+    message: string,
+    roomID: string,
+    date: string
 }
 
-const page = ({ username, roomID, socket }: ChatProps) => {
-
-    console.log("roomID", roomID)
+const Chat = ({ username, roomID, socket }: ChatProps) => {
 
     const [message, setMessage] = useState("")
     const [messageList, setMessageList] = useState<Message[]>([])
 
     useEffect(() => {
-        socket?.on("messageReturn", (data: any) => {
+        const handleNewMessage = (data: any) => {
             setMessageList((prev) => [...prev, data])
-        })
+        }
+        socket.on("messageReturn", handleNewMessage)
+
+        return () => socket.off("messageReturn", handleNewMessage)
     }, [socket])
 
     const getCurrentTime = () => {
@@ -33,41 +33,36 @@ const page = ({ username, roomID, socket }: ChatProps) => {
         return date.getHours() + ":" + date.getMinutes()
     }
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         const messageContent = {
             username: username,
             message: message,
             roomID: roomID,
             date: getCurrentTime()
         }
-        socket?.emit("messageContent", messageContent)
+        await socket.emit("messageContent", messageContent)
         setMessageList((prev) => [...prev, messageContent])
         setMessage("")
     }
 
-    console.log(messageList, "mesajlar")
-
     return (
-        <div>
+        <>
             <div>
                 {messageList && messageList.map((msg: any, index) => {
                     return (
                         <div key={index}>
-                            <div>
-                                <div className="mb-4">{msg.message}</div>
-                                <div className="message-info position-absolute">{msg.username} - {msg.date}</div>
-                            </div>
+                            <div className="mb-4">{msg.message}</div>
+                            <div className="message-info position-absolute">{msg.username} - {msg.date}</div>
                         </div>
                     )
                 })}
             </div>
-
             <div>
                 <input value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message"></input>
                 <button onClick={sendMessage}>Send</button>
             </div>
-        </div>
+        </>
     )
 }
 
-export default page
+export default Chat
