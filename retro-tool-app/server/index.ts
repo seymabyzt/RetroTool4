@@ -12,7 +12,7 @@ const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"]
-    }
+    },
 })
 
 io.on("connection", (socket) => {
@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
     })
 })
 
-const port = 5000
+const port = 8000
 
 server.listen(port, () => {
     console.log(`Server is running on port ${port}.`)

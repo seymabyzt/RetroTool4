@@ -6,7 +6,7 @@ import { io, Socket } from "socket.io-client"
 import Login from "./components/Login"
 import Chat from "./components/Chat"
 
-const socket: Socket = io("http://localhost:5000")
+const socket: Socket = io("http://localhost:8000")
 
 const page = () => {
 
