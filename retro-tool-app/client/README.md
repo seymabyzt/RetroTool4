@@ -5,6 +5,12 @@ Seyma
 Hasan
 
 
+Note
+Admin girişi sağlanacak // if admin
+Login ve Chati giriş sayfasından alacağız    done
+Sütunlar için 3 tane component oluşturabiliriz     
+Admin tüm mesajları göster diyene kadar paylaşılmıyor inputlara girilen yorumlar gizlenecek. 
+
 ## Getting Started
 
 First, run the development server:
