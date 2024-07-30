@@ -21,8 +21,8 @@ io.on("connection", (socket) => {
         // console.log(socket.id + " joined the room:", data)
     })
 
-    socket.on("messageContent", (data) => {
-        socket.to(data.roomID).emit("messageReturn", data)
+    socket.on("commentContent", (data) => {
+        socket.to(data.roomID).emit("commentReturn", data)
     })
 })
 
