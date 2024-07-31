@@ -1,10 +1,9 @@
 Seyma
 // Login componentinde Link kullanarak route işlemi yapıyoruz fakar "roomID" chat sayfamıza gelmiyot.
 // propsu karşılayamdık...
+retrotool page.tsx deki useState leri ortadan kaldırmak için o değişkenleri redux da tutabiliriz. Böylelikle use client ortadan kalkar.
 
 Hasan
-
-
 Note
 Admin girişi sağlanacak // if admin
 Login ve Chati giriş sayfasından alacağız    done
