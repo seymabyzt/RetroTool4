@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface CommentListProps {
-    username: string;
+    userID: string,
     comment: string;
     roomID: string;
     column: string;
     date: string;
+    commentID: string
 }
 
 interface CommentListState {

@@ -3,8 +3,12 @@ import { useState, useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
 import { addComment } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
+import { v4 as uuidv4 } from 'uuid'
 
-const Topic = ({ column, username, roomID, socket }: TopicProps) => {
+// Atoms
+import HideInput from "./Atoms/HideInput"
+
+const Topic = ({ column, userID, roomID, socket }: TopicProps) => {
 
     const dispatch = useAppDispatch()
 
@@ -31,15 +35,18 @@ const Topic = ({ column, username, roomID, socket }: TopicProps) => {
         return () => socket.off("commentReturn", handleNewComment)
     }, [socket])
 
+    // console.log(commentList1, "list1")
+
     const sendComment = async () => {
         const currentComment = column === 'one' ? comment1 : column === 'two' ? comment2 : comment3
 
         const commentContent: Comment = {
-            username: username,
+            userID: userID,
             comment: currentComment,
             roomID: roomID,
             column: column,
-            date: new Date().toLocaleTimeString()
+            date: new Date().toLocaleTimeString(),
+            commentID: uuidv4()
         }
 
         await socket.emit("commentContent", commentContent)
@@ -58,32 +65,52 @@ const Topic = ({ column, username, roomID, socket }: TopicProps) => {
         }
     }
 
+    const handleKeyEnter = (e: any) => {
+        if (e.key === 'Enter') {
+            sendComment()
+        }
+    }
+
+    const deleteComment = (ID: string) => {
+        if (column === 'one') {
+            setCommentList1(commentList1.filter((comment) => comment.commentID != ID))
+
+        } else if (column === 'two') {
+            setCommentList2(commentList1.filter((comment) => comment.commentID != ID))
+
+        } else if (column === 'three') {
+            setCommentList3(commentList1.filter((comment) => comment.commentID != ID))
+        }
+    }
+
     return (
         <>
-            <div>
-                {(column === 'one' ? commentList1 : column === 'two' ? commentList2 : commentList3).map((comment, index) => (
-                    <div key={index}>
-                        <div>{comment.comment}</div>
-                        <div>{comment.username} - {comment.date}</div>
-                    </div>
-                ))}
-            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                <form onSubmit={(e) => e.preventDefault()}>
+                    <input
+                        value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
+                        onChange={(e) => {
+                            if (column === 'one') {
+                                setComment1(e.target.value)
+                            } else if (column === 'two') {
+                                setComment2(e.target.value)
+                            } else {
+                                setComment3(e.target.value)
+                            }
+                        }}
+                        onKeyDown={handleKeyEnter}
+                        placeholder="Write a comment"
+                    />
+                </form>
 
-            <div>
-                <input
-                    value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
-                    onChange={(e) => {
-                        if (column === 'one') {
-                            setComment1(e.target.value);
-                        } else if (column === 'two') {
-                            setComment2(e.target.value);
-                        } else {
-                            setComment3(e.target.value);
-                        }
-                    }}
-                    placeholder="Write a comment"
-                />
-                <button onClick={sendComment}>Send</button>
+                <div>
+                    {(column === 'one' ? commentList1 : column === 'two' ? commentList2 : commentList3).map((comment, index) => (
+                        <div key={index} style={{ display: "flex" }}>
+                            {userID == comment.userID && <button onClick={() => deleteComment(comment.commentID)}>X</button>}
+                            <div>{userID == comment.userID ? comment.comment : <HideInput />}</div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     )

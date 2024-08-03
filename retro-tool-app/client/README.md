@@ -1,13 +1,9 @@
 Seyma
-// Login componentinde Link kullanarak route işlemi yapıyoruz fakar "roomID" chat sayfamıza gelmiyot.
-// propsu karşılayamdık...
-retrotool page.tsx deki useState leri ortadan kaldırmak için o değişkenleri redux da tutabiliriz. Böylelikle use client ortadan kalkar.
+// Bir kullanıcı var olan bir odaya daha sonra katılırsa katılmadan önce yazılan mesajları katıldığında görebilsin. Şuan gözükmüyor.
+// Topic.tsx'te redux'tan listeleri çekmiyoruz....
 
 Hasan
-Note
-Admin girişi sağlanacak // if admin
-Login ve Chati giriş sayfasından alacağız    done
-Sütunlar için 3 tane component oluşturabiliriz     
+Admin girişi sağlanacak // if admin 
 Admin tüm mesajları göster diyene kadar paylaşılmıyor inputlara girilen yorumlar gizlenecek. 
 
 ## Getting Started

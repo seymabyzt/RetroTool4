@@ -1,14 +1,15 @@
 export interface TopicProps {
-    username: string,
+    userID: string,
     roomID: string,
     socket: any,
     column: string
 }
 
 export interface Comment {
-    username: string,
+    userID: string,
     comment: string,
     roomID: string,
     column: string,
-    date: string
+    date: string,
+    commentID: string
 }

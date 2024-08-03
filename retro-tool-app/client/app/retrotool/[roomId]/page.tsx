@@ -1,32 +1,36 @@
 'use client'
 
-import { useState } from "react"
-import Login from "../../components/Login"
+import { useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
-import  styles  from '../retrotool.module.css'
-import Topic from "../../components/Topic";
+import styles from '../retrotool.module.css'
+import Topic from "../../components/Topic"
 import Navbar from "../../components/Navbar/Navbar"
+import { v4 as uuidv4 } from 'uuid'
+
 const socket: Socket = io("http://localhost:8000")
 
-const page = ({params} : any) => {
-  console.log(params.roomId)
-  const [username, setUsername] = useState<string>("")
+const page = ({ params }: any) => {
+
   const roomID = params.roomId
-  const [isLogin, setIsLogin] = useState<boolean>(false)
+
+  const [userID, setUserID] = useState<string>("")
+
+  useEffect(() => {
+    setUserID(uuidv4())
+    socket.emit("roomID", roomID)
+  }, [])
+
   return (
     <>
-    <Navbar></Navbar>
-   {roomID && isLogin ? (
-
-    <div className={styles.columnContainer}>
-        <Topic column='one' username={username} roomID={roomID} socket={socket} />
-        <Topic column='two' username={username} roomID={roomID} socket={socket} />
-        <Topic column='three' username={username} roomID={roomID} socket={socket} /> </div>
-      ) : (
-        <Login username={username} setUsername={setUsername} roomID={roomID} socket={socket} setIsLogin={setIsLogin} />
-      )}
+      <Navbar />
+      {roomID &&
+        <div className={styles.columnContainer}>
+          <Topic column='one' userID={userID} roomID={roomID} socket={socket} />
+          <Topic column='two' userID={userID} roomID={roomID} socket={socket} />
+          <Topic column='three' userID={userID} roomID={roomID} socket={socket} />
+        </div>
+      }
     </>
   )
 }
-
 export default page
