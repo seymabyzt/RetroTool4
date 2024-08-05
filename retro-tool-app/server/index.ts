@@ -18,11 +18,14 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     socket.on("roomID", (data) => {
         socket.join(data)
-        // console.log(socket.id + " joined the room:", data)
     })
 
     socket.on("commentContent", (data) => {
         socket.to(data.roomID).emit("commentReturn", data)
+    })
+
+    socket.on('deleteComment', ({ commentID, roomID }) => {
+        io.to(roomID).emit('commentDeleted', commentID)
     })
 })
 

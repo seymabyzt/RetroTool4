@@ -13,3 +13,9 @@ export interface Comment {
     date: string,
     commentID: string
 }
+
+export interface CommentListState {
+    commentList1: Comment[],
+    commentList2: Comment[],
+    commentList3: Comment[]
+}
