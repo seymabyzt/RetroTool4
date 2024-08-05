@@ -1,4 +1,5 @@
 export interface TopicProps {
+    step: number,
     userID: string,
     roomID: string,
     socket: any,
@@ -11,7 +12,8 @@ export interface Comment {
     roomID: string,
     column: string,
     date: string,
-    commentID: string
+    commentID: string,
+    likeCount: number
 }
 
 export interface CommentListState {

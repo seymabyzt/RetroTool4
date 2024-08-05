@@ -30,9 +30,26 @@ export const commentListsSlice = createSlice({
             state.commentList1 = state.commentList1.filter((comment) => comment.commentID !== action.payload)
             state.commentList2 = state.commentList2.filter((comment) => comment.commentID !== action.payload)
             state.commentList3 = state.commentList3.filter((comment) => comment.commentID !== action.payload)
+        },
+        incrementLikeCount(state, action: PayloadAction<{ commentID: string, column: string }>) {
+            const { commentID, column } = action.payload
+            
+            let commentList: any
+            if (column === 'one') {
+                commentList = state.commentList1;
+            } else if (column === 'two') {
+                commentList = state.commentList2;
+            } else if (column === 'three') {
+                commentList = state.commentList3;
+            }
+
+            const comment = commentList.find((comment: any) => comment.commentID === commentID);
+            if (comment) {
+                comment.likeCount += 1;
+            }
         }
     }
 })
 
 export default commentListsSlice.reducer
-export const { addComment, deleteComment } = commentListsSlice.actions
+export const { addComment, deleteComment, incrementLikeCount } = commentListsSlice.actions

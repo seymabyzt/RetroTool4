@@ -1,13 +1,13 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
-import { addComment, deleteComment } from "../redux/slices/commentList/commentListsSlice"
+import { addComment, deleteComment, incrementLikeCount } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
 import { v4 as uuidv4 } from 'uuid'
 
 import HideInput from "./Atoms/HideInput"
 
-const Topic = ({ column, userID, roomID, socket }: TopicProps) => {
+const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
     const dispatch = useAppDispatch()
 
     const commentList1 = useAppSelector((state) => state.commentList.commentList1)
@@ -17,6 +17,8 @@ const Topic = ({ column, userID, roomID, socket }: TopicProps) => {
     const [comment1, setComment1] = useState("")
     const [comment2, setComment2] = useState("")
     const [comment3, setComment3] = useState("")
+
+    // const [commentLikeCount, setCommentLikeCount] = useState(0)
 
     useEffect(() => {
         const handleNewComment = (data: Comment) => {
@@ -45,8 +47,9 @@ const Topic = ({ column, userID, roomID, socket }: TopicProps) => {
             roomID: roomID,
             column: column,
             date: new Date().toLocaleTimeString(),
-            commentID: uuidv4()
-        };
+            commentID: uuidv4(),
+            likeCount: 0 // initial likeCount is 0
+        }
 
         await socket.emit("commentContent", commentContent)
 
@@ -71,6 +74,12 @@ const Topic = ({ column, userID, roomID, socket }: TopicProps) => {
             sendComment()
         }
     }
+
+    const handleIncrementLike = (commentID: string) => {
+        dispatch(incrementLikeCount({ commentID, column }));
+    };
+
+    // console.log("list1", commentList1)
 
     const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : commentList3
 
@@ -100,7 +109,16 @@ const Topic = ({ column, userID, roomID, socket }: TopicProps) => {
                             {userID === comment.userID && (
                                 <button onClick={() => deleteCommentAndNotify(comment.commentID)}>X</button>
                             )}
-                            <div>{userID === comment.userID ? comment.comment : <HideInput />}</div>
+                            <div>
+                                {
+                                    step == 1 ?
+                                        userID === comment.userID ? comment.comment + " " + comment.likeCount : <HideInput />
+                                        :
+                                        comment.comment + " " + comment.likeCount
+                                }
+                                {/* {userID === comment.userID ? comment.comment + " " + comment.likeCount : <HideInput />} */}
+                            </div>
+                            {step == 2 && <button onClick={() => handleIncrementLike(comment.commentID)}>increment</button>}
                         </div>
                     ))}
                 </div>

@@ -17,13 +17,13 @@ const btnStyle: React.CSSProperties = {
 
 const { Title } = Typography;
 
-const Navbar: React.FC = () => {
+const Navbar = ({ step, setStep }: { step: number, setStep: any }) => {
   return (
     <Flex gap="middle" align="start" vertical>
-   
+
       <Flex style={boxStyle}>
-      <Title level={4}>RetroTool4</Title>
-      <Button style={btnStyle}>Show Comment</Button>
+        <Title level={4}>RetroTool4</Title>
+        <Button onClick={() => setStep(step + 1)} style={btnStyle}>Show Comment</Button>
       </Flex>
     </Flex>
   );

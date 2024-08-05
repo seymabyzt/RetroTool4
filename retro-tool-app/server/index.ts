@@ -27,6 +27,10 @@ io.on("connection", (socket) => {
     socket.on('deleteComment', ({ commentID, roomID }) => {
         io.to(roomID).emit('commentDeleted', commentID)
     })
+
+    socket.on("stepChange", ({ roomID, newStep }) => {
+        io.to(roomID).emit("stepUpdated", newStep)
+    })
 })
 
 const port = 8000

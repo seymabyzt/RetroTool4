@@ -15,19 +15,40 @@ const page = ({ params }: any) => {
 
   const [userID, setUserID] = useState<string>("")
 
+  // useEffect(() => {
+  //   setUserID(uuidv4())
+  //   socket.emit("roomID", roomID)
+  // }, [])
+
   useEffect(() => {
-    setUserID(uuidv4())
-    socket.emit("roomID", roomID)
-  }, [])
+    setUserID(uuidv4());
+    socket.emit("roomID", roomID);
+
+    socket.on("stepUpdated", (newStep) => {
+      setStep(newStep);
+    });
+
+    return () => {
+      socket.off("stepUpdated");
+    };
+  }, [roomID]);
+
+  const handleStepChange = (newStep: number) => {
+    setStep(newStep);
+    socket.emit("stepChange", { roomID, newStep });
+  };
+
+  const [step, setStep] = useState(1)
 
   return (
     <>
-      <Navbar />
+      <Navbar step={step} setStep={handleStepChange}/>
       {roomID &&
         <div className={styles.columnContainer}>
-          <Topic column='one' userID={userID} roomID={roomID} socket={socket} />
-          <Topic column='two' userID={userID} roomID={roomID} socket={socket} />
-          <Topic column='three' userID={userID} roomID={roomID} socket={socket} />
+          <Topic step={step} column='one' userID={userID} roomID={roomID} socket={socket} />
+          <Topic step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
+          <Topic step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
+          <div>STEP: {step}</div>
         </div>
       }
     </>
