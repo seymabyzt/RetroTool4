@@ -2,23 +2,21 @@
 
 import { useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
-import styles from '../retrotool.module.css'
+//import styles from '../retrotool.module.css'
 import Topic from "../../components/Topic"
 import Navbar from "../../components/Navbar/Navbar"
 import { v4 as uuidv4 } from 'uuid'
+import { Col, Row } from 'antd';
 
 const socket: Socket = io("http://localhost:8000")
+
+
 
 const page = ({ params }: any) => {
 
   const roomID = params.roomId
 
   const [userID, setUserID] = useState<string>("")
-
-  // useEffect(() => {
-  //   setUserID(uuidv4())
-  //   socket.emit("roomID", roomID)
-  // }, [])
 
   useEffect(() => {
     setUserID(uuidv4());
@@ -44,12 +42,18 @@ const page = ({ params }: any) => {
     <>
       <Navbar step={step} setStep={handleStepChange}/>
       {roomID &&
-        <div className={styles.columnContainer}>
+        <Row  style={{justifyContent: "space-around"}}>
+          <Col md={{ span: 6}} style={{backgroundColor: '#f0f5ff', height: '90vh', padding: '10px'}}>
           <Topic step={step} column='one' userID={userID} roomID={roomID} socket={socket} />
-          <Topic step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
-          <Topic step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
-          <div>STEP: {step}</div>
-        </div>
+          </Col>
+         <Col md={{ span: 6}} style={{backgroundColor: '#f0f5ff', height: '90vh', padding: '10px'}}>
+         <Topic step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
+         </Col>
+         <Col md={{ span: 6}} style={{backgroundColor: '#f0f5ff', height: '90vh', padding: '10px'}}>
+         <Topic step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
+         </Col>
+          {/* <div>STEP: {step}</div> */}
+        </Row>
       }
     </>
   )

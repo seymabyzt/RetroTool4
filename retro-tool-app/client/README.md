@@ -1,6 +1,5 @@
 Seyma
 // Bir kullanıcı var olan bir odaya daha sonra katılırsa katılmadan önce yazılan mesajları katıldığında görebilsin. Şuan gözükmüyor.
-// Topic.tsx'te redux'tan listeleri çekmiyoruz....
 
 Hasan
 Admin girişi sağlanacak // if admin 

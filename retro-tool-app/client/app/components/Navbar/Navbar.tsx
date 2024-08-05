@@ -23,7 +23,7 @@ const Navbar = ({ step, setStep }: { step: number, setStep: any }) => {
 
       <Flex style={boxStyle}>
         <Title level={4}>RetroTool4</Title>
-        <Button onClick={() => setStep(step + 1)} style={btnStyle}>Show Comment</Button>
+        <Button onClick={() => setStep(step + 1)} style={btnStyle}>Group & Vote Comments</Button>
       </Flex>
     </Flex>
   );

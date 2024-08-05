@@ -4,8 +4,10 @@ import { useAppDispatch, useAppSelector } from "../redux/store/store"
 import { addComment, deleteComment, incrementLikeCount } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
 import { v4 as uuidv4 } from 'uuid'
-
+import { LikeTwoTone, DeleteTwoTone, SmileTwoTone, FrownTwoTone, EditTwoTone
+  } from '@ant-design/icons';
 import HideInput from "./Atoms/HideInput"
+import { Input, Flex } from "antd"
 
 const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
     const dispatch = useAppDispatch()
@@ -87,8 +89,10 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         <>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <form onSubmit={(e) => e.preventDefault()}>
-                    <input
-                        value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
+                    <Flex style={{gap: 5}}>
+                    {column == 'one' ?  <SmileTwoTone /> : column === 'two' ? <FrownTwoTone />  :  <EditTwoTone />}
+                    <Input style={{padding: '10px'}}
+                        variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
                         onChange={(e) => {
                             if (column === 'one') {
                                 setComment1(e.target.value)
@@ -99,15 +103,19 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                             }
                         }}
                         onKeyDown={handleKeyEnter}
-                        placeholder="Write a comment"
+                       
+                        placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : 'I want to ask about...'}
                     />
+                    </Flex>
+                       
                 </form>
 
                 <div>
                     {commentList.map((comment, index) => (
                         <div key={index} style={{ display: "flex" }}>
                             {userID === comment.userID && (
-                                <button onClick={() => deleteCommentAndNotify(comment.commentID)}>X</button>
+                                <DeleteTwoTone onClick={() => deleteCommentAndNotify(comment.commentID)}/>
+                              
                             )}
                             <div>
                                 {
@@ -118,7 +126,8 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                                 }
                                 {/* {userID === comment.userID ? comment.comment + " " + comment.likeCount : <HideInput />} */}
                             </div>
-                            {step == 2 && <button onClick={() => handleIncrementLike(comment.commentID)}>increment</button>}
+                            {step == 2 && <LikeTwoTone onClick={() => handleIncrementLike(comment.commentID)}/>}
+                     
                         </div>
                     ))}
                 </div>
