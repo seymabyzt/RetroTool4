@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "antd"
 import { useAppSelector } from "@/app/redux/store/store"
 
-const StepButton = ({ step, setStep }: { step: number, setStep: any }) => {
+const StepButton = ({ step, setStep, exportPdfFunc }: { step: number, setStep: any, exportPdfFunc: any }) => {
 
     const [isDisabledButton, setIsDisabledButton] = useState(true)
 
@@ -26,9 +26,18 @@ const StepButton = ({ step, setStep }: { step: number, setStep: any }) => {
         }
     }, [commentList1, commentList2, commentList3])
 
+    const handleStepIncrement = () => {
+        if (step < 4) {
+            setStep(step + 1)
+        }
+        else {
+            exportPdfFunc()
+        }
+    }
+
     return (
-        <Button disabled={isDisabledButton} onClick={() => setStep(step + 1)} style={btnStyle}>
-            {step == 1 ? "Group & vote comments" : step == 2 ? "Discuss and add action items" : step == 3 ? 'Finish Retro': 'Export'}
+        <Button disabled={isDisabledButton} onClick={handleStepIncrement} style={btnStyle}>
+            {step == 1 ? "Group & vote comments" : step == 2 ? "Discuss and add action items" : step == 3 ? 'Finish Retro' : 'Export'}
         </Button>
     )
 }

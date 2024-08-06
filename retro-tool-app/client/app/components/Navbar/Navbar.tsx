@@ -1,5 +1,5 @@
 import { Flex, Typography } from 'antd'
-import StepButton from '../Atoms/StepButton'
+import ExportPdf from '../Atoms/ExportPdf'
 
 const Navbar = ({ step, setStep }: { step: number, setStep: any }) => {
 
@@ -19,7 +19,7 @@ const Navbar = ({ step, setStep }: { step: number, setStep: any }) => {
     <Flex gap="middle" align="start" vertical>
       <Flex style={boxStyle}>
         <Title level={4}>RetroTool4</Title>
-        <StepButton step={step} setStep={setStep} />
+        <ExportPdf step={step} setStep={setStep} />
       </Flex>
     </Flex>
   )
