@@ -7,7 +7,7 @@ const page = () => {
 
   return (
     <>
-      <Link href={`/retrotool/${id}`} >Start a New Retro</Link>
+      <Link href={`/room/${id}`} >Start a New Retro</Link>
     </>
   )
 }

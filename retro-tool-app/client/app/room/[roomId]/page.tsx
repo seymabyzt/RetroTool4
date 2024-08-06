@@ -40,19 +40,21 @@ const page = ({ params }: any) => {
 
   return (
     <>
-      <Navbar step={step} setStep={handleStepChange}/>
+      <Navbar step={step} setStep={handleStepChange} />
       {roomID &&
-        <Row  style={{justifyContent: "space-around"}}>
-          <Col md={{ span: 6}} style={{backgroundColor: '#f0f5ff', height: '90vh', padding: '10px'}}>
-          <Topic step={step} column='one' userID={userID} roomID={roomID} socket={socket} />
+        <Row style={{ justifyContent: "space-around" }}>
+          <Col md={{ span: 6 }} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '10px' }}>
+            <Topic step={step} column='one' userID={userID} roomID={roomID} socket={socket} />
           </Col>
-         <Col md={{ span: 6}} style={{backgroundColor: '#f0f5ff', height: '90vh', padding: '10px'}}>
-         <Topic step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
-         </Col>
-         <Col md={{ span: 6}} style={{backgroundColor: '#f0f5ff', height: '90vh', padding: '10px'}}>
-         <Topic step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
-         </Col>
-          {/* <div>STEP: {step}</div> */}
+          <Col md={{ span: 6 }} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '10px' }}>
+            <Topic step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
+          </Col>
+          <Col md={{ span: 6 }} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '10px' }}>
+            <Topic step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
+          </Col>
+          <Col md={{ span: 6 }} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '10px' }}>
+            <Topic step={step} column='four' userID={userID} roomID={roomID} socket={socket} />
+          </Col>
         </Row>
       }
     </>
