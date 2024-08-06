@@ -28,7 +28,7 @@ const StepButton = ({ step, setStep }: { step: number, setStep: any }) => {
 
     return (
         <Button disabled={isDisabledButton} onClick={() => setStep(step + 1)} style={btnStyle}>
-            {step == 1 ? "Group & vote comments" : "Discuss and add action items"}
+            {step == 1 ? "Group & vote comments" : step == 2 ? "Discuss and add action items" : step == 3 ? 'Finish Retro': 'Export'}
         </Button>
     )
 }

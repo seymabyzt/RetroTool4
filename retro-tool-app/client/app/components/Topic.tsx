@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store/store"
 import { addComment, deleteComment, incrementLikeCount } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
 import { v4 as uuidv4 } from 'uuid'
-import { LikeTwoTone, DeleteTwoTone, SmileTwoTone, FrownTwoTone, EditTwoTone } from '@ant-design/icons'
+import { LikeTwoTone, DeleteTwoTone, SmileTwoTone, FrownTwoTone, EditTwoTone, CheckCircleOutlined } from '@ant-design/icons'
 import HideInput from "./Atoms/HideInput"
 import { Input, Flex } from "antd"
 
@@ -15,10 +15,13 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
     const commentList1 = useAppSelector((state) => state.commentList.commentList1)
     const commentList2 = useAppSelector((state) => state.commentList.commentList2)
     const commentList3 = useAppSelector((state) => state.commentList.commentList3)
+    const commentList4 = useAppSelector((state) => state.commentList.commentList4)
 
     const [comment1, setComment1] = useState("")
     const [comment2, setComment2] = useState("")
     const [comment3, setComment3] = useState("")
+    const [comment4, setComment4] = useState("")
+    const [isDisabledInput, setIsDisabledInput] = useState(true)
 
     useEffect(() => {
         const handleNewComment = (data: Comment) => {
@@ -32,7 +35,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         const handleIncrementLikeCount = ({ commentID, column, userID }: { commentID: string, column: string, userID: string }) => {
             dispatch(incrementLikeCount({ commentID, column, userID }));
         }
-
+         
         socket.on("commentReturn", handleNewComment)
         socket.on("commentDeleted", handleDeleteComment)
         socket.on("likeCountUpdated", handleIncrementLikeCount)
@@ -44,8 +47,16 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         }
     }, [socket, dispatch])
 
+    useEffect (()=> {
+        if (step === 3) {
+            setIsDisabledInput(false)
+        } else if (step === 4) {
+            setIsDisabledInput(true)
+        }
+    }, [step, column])
+
     const sendComment = async () => {
-        const currentComment = column === 'one' ? comment1 : column === 'two' ? comment2 : comment3
+        const currentComment = column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4
 
         const commentContent: Comment = {
             userID: userID,
@@ -68,6 +79,8 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
             setComment2("")
         } else if (column === 'three') {
             setComment3("")
+        } else {
+            setComment4("")
         }
     }
 
@@ -93,35 +106,36 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
             setComment1(e.target.value)
         } else if (column === 'two') {
             setComment2(e.target.value)
-        } else {
+        } else if (column === 'three'){
             setComment3(e.target.value)
+        } else {
+            setComment4(e.target.value)
         }
     }
 
     console.log("list1", commentList1)
 
-    const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : commentList3
+    const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : column === 'three' ? commentList3 : commentList4
 
     return (
         <>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <form onSubmit={(e) => e.preventDefault()}>
                     <Flex style={{ gap: 5 }}>
-                        {column == 'one' ? <SmileTwoTone /> : column === 'two' ? <FrownTwoTone /> : <EditTwoTone />}
-                        <Input style={{ padding: '10px' }}
-                            variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
+                        {column == 'one' ? <SmileTwoTone /> : column === 'two' ? <FrownTwoTone /> : column === 'three' ? <EditTwoTone /> : <CheckCircleOutlined />}
+                        <Input disabled={(column == 'four' && step != 3) ||  step == 4 && isDisabledInput} style={{ padding: '10px' }}
+                            variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
                             onChange={handleInputChange}
                             onKeyDown={handleKeyEnter}
-                            placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : 'I want to ask about...'}
+                            placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ?  'We could improve...' : column == 'three' ?  'I want to ask about...': 'We need to do...'}
                         />
                     </Flex>
-
                 </form>
 
                 <div>
                     {commentList.map((comment, index) => (
                         <div key={index} style={{ display: "flex" }}>
-                            {userID === comment.userID && (
+                            {userID === comment.userID && step != 4 && (
                                 <DeleteTwoTone onClick={() => deleteCommentAndNotify(comment.commentID)} />
 
                             )}
@@ -129,11 +143,12 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                                 {
                                     step == 1 ?
                                         userID === comment.userID ? comment.comment : <HideInput />
-                                        :
-                                        comment.comment + " " + comment.likeCount
+                                        : step == 2 ?
+                                        comment.comment + " " + comment.likeCount : comment.comment
+                                    
                                 }
                             </div>
-                            {step == 2 && <LikeTwoTone onClick={() => handleIncrementLike(comment.commentID)} />}
+                            {step == 2 && column !== 'four' && <LikeTwoTone onClick={() => handleIncrementLike(comment.commentID)} /> }
 
                         </div>
                     ))}

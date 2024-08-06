@@ -4,7 +4,8 @@ import { Comment, CommentListState } from '@/app/interfaces/interfaces'
 const initialState: CommentListState = {
     commentList1: [],
     commentList2: [],
-    commentList3: []
+    commentList3: [],
+    commentList4: []
 }
 
 export const commentListsSlice = createSlice({
@@ -17,7 +18,8 @@ export const commentListsSlice = createSlice({
             const listMap: Record<string, keyof CommentListState> = {
                 one: 'commentList1',
                 two: 'commentList2',
-                three: 'commentList3'
+                three: 'commentList3',
+                four: 'commentList4'
             }
 
             const listKey = listMap[column]
@@ -30,6 +32,7 @@ export const commentListsSlice = createSlice({
             state.commentList1 = state.commentList1.filter((comment) => comment.commentID !== action.payload)
             state.commentList2 = state.commentList2.filter((comment) => comment.commentID !== action.payload)
             state.commentList3 = state.commentList3.filter((comment) => comment.commentID !== action.payload)
+            state.commentList4 = state.commentList4.filter((comment) => comment.commentID !== action.payload)
         },
         incrementLikeCount(state, action: PayloadAction<{ commentID: string, column: string, userID: string }>) {
             const { commentID, column, userID } = action.payload;
@@ -41,6 +44,9 @@ export const commentListsSlice = createSlice({
                 commentList = state.commentList2;
             } else if (column === 'three') {
                 commentList = state.commentList3;
+            }
+            else if (column === 'four') {
+                commentList = state.commentList4;
             }
 
             const comment = commentList?.find((comment: any) => comment.commentID === commentID);
