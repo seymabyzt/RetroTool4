@@ -1,11 +1,11 @@
 "use client"
+
 import { useState, useEffect, ChangeEvent } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
 import { addComment, deleteComment, incrementLikeCount } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
 import { v4 as uuidv4 } from 'uuid'
-import { LikeTwoTone, DeleteTwoTone, SmileTwoTone, FrownTwoTone, EditTwoTone
-  } from '@ant-design/icons';
+import { LikeTwoTone, DeleteTwoTone, SmileTwoTone, FrownTwoTone, EditTwoTone } from '@ant-design/icons'
 import HideInput from "./Atoms/HideInput"
 import { Input, Flex } from "antd"
 
@@ -20,8 +20,6 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
     const [comment2, setComment2] = useState("")
     const [comment3, setComment3] = useState("")
 
-    // const [commentLikeCount, setCommentLikeCount] = useState(0)
-
     useEffect(() => {
         const handleNewComment = (data: Comment) => {
             dispatch(addComment(data))
@@ -31,12 +29,18 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
             dispatch(deleteComment(commentID))
         }
 
+        const handleIncrementLikeCount = ({ commentID, column, userID }: { commentID: string, column: string, userID: string }) => {
+            dispatch(incrementLikeCount({ commentID, column, userID }));
+        }
+
         socket.on("commentReturn", handleNewComment)
         socket.on("commentDeleted", handleDeleteComment)
+        socket.on("likeCountUpdated", handleIncrementLikeCount)
 
         return () => {
             socket.off("commentReturn", handleNewComment)
             socket.off("commentDeleted", handleDeleteComment)
+            socket.off("likeCountUpdated", handleIncrementLikeCount)
         }
     }, [socket, dispatch])
 
@@ -50,7 +54,8 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
             column: column,
             date: new Date().toLocaleTimeString(),
             commentID: uuidv4(),
-            likeCount: 0 // initial likeCount is 0
+            likeCount: 0,
+            likedByUsers: []
         }
 
         await socket.emit("commentContent", commentContent)
@@ -77,9 +82,11 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         }
     }
 
-    const handleIncrementLike = (commentID: string) => {
-        dispatch(incrementLikeCount({ commentID, column }));
+    const handleIncrementLike = async (commentID: string) => {
+        dispatch(incrementLikeCount({ commentID, column, userID }));
+        await socket.emit("likeCount", { commentID, roomID, column, userID });
     };
+
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (column === 'one') {
@@ -91,7 +98,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         }
     }
 
-    // console.log("list1", commentList1)
+    console.log("list1", commentList1)
 
     const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : commentList3
 
@@ -99,36 +106,35 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         <>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <form onSubmit={(e) => e.preventDefault()}>
-                    <Flex style={{gap: 5}}>
-                    {column == 'one' ?  <SmileTwoTone /> : column === 'two' ? <FrownTwoTone />  :  <EditTwoTone />}
-                    <Input style={{padding: '10px'}}
-                        variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
-                        onChange={handleInputChange}
-                        onKeyDown={handleKeyEnter}
-                        placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : 'I want to ask about...'}
-                    />
+                    <Flex style={{ gap: 5 }}>
+                        {column == 'one' ? <SmileTwoTone /> : column === 'two' ? <FrownTwoTone /> : <EditTwoTone />}
+                        <Input style={{ padding: '10px' }}
+                            variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyEnter}
+                            placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : 'I want to ask about...'}
+                        />
                     </Flex>
-                       
+
                 </form>
 
                 <div>
                     {commentList.map((comment, index) => (
                         <div key={index} style={{ display: "flex" }}>
                             {userID === comment.userID && (
-                                <DeleteTwoTone onClick={() => deleteCommentAndNotify(comment.commentID)}/>
-                              
+                                <DeleteTwoTone onClick={() => deleteCommentAndNotify(comment.commentID)} />
+
                             )}
                             <div>
                                 {
                                     step == 1 ?
-                                        userID === comment.userID ? comment.comment + " " + comment.likeCount : <HideInput />
+                                        userID === comment.userID ? comment.comment : <HideInput />
                                         :
                                         comment.comment + " " + comment.likeCount
                                 }
-                                {/* {userID === comment.userID ? comment.comment + " " + comment.likeCount : <HideInput />} */}
                             </div>
-                            {step == 2 && <LikeTwoTone onClick={() => handleIncrementLike(comment.commentID)}/>}
-                     
+                            {step == 2 && <LikeTwoTone onClick={() => handleIncrementLike(comment.commentID)} />}
+
                         </div>
                     ))}
                 </div>

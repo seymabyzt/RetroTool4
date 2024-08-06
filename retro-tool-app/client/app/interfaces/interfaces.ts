@@ -13,7 +13,8 @@ export interface Comment {
     column: string,
     date: string,
     commentID: string,
-    likeCount: number
+    likeCount: number,
+    likedByUsers?: string[]
 }
 
 export interface CommentListState {

@@ -31,10 +31,10 @@ export const commentListsSlice = createSlice({
             state.commentList2 = state.commentList2.filter((comment) => comment.commentID !== action.payload)
             state.commentList3 = state.commentList3.filter((comment) => comment.commentID !== action.payload)
         },
-        incrementLikeCount(state, action: PayloadAction<{ commentID: string, column: string }>) {
-            const { commentID, column } = action.payload
-            
-            let commentList: any
+        incrementLikeCount(state, action: PayloadAction<{ commentID: string, column: string, userID: string }>) {
+            const { commentID, column, userID } = action.payload;
+
+            let commentList: any;
             if (column === 'one') {
                 commentList = state.commentList1;
             } else if (column === 'two') {
@@ -43,11 +43,15 @@ export const commentListsSlice = createSlice({
                 commentList = state.commentList3;
             }
 
-            const comment = commentList.find((comment: any) => comment.commentID === commentID);
+            const comment = commentList?.find((comment: any) => comment.commentID === commentID);
             if (comment) {
-                comment.likeCount += 1;
+                if (!comment.likedByUsers?.includes(userID)) {
+                    comment.likeCount += 1;
+                    comment.likedByUsers?.push(userID);
+                }
             }
         }
+
     }
 })
 

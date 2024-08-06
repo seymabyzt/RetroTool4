@@ -31,6 +31,11 @@ io.on("connection", (socket) => {
     socket.on("stepChange", ({ roomID, newStep }) => {
         io.to(roomID).emit("stepUpdated", newStep)
     })
+
+    socket.on("likeCount", ({ commentID, roomID, column, userID }) => {
+        io.to(roomID).emit("likeCountUpdated", { commentID, column, userID })
+    })
+
 })
 
 const port = 8000
