@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, ChangeEvent } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
 import { addComment, deleteComment, incrementLikeCount } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
@@ -81,6 +81,16 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         dispatch(incrementLikeCount({ commentID, column }));
     };
 
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (column === 'one') {
+            setComment1(e.target.value)
+        } else if (column === 'two') {
+            setComment2(e.target.value)
+        } else {
+            setComment3(e.target.value)
+        }
+    }
+
     // console.log("list1", commentList1)
 
     const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : commentList3
@@ -93,17 +103,8 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                     {column == 'one' ?  <SmileTwoTone /> : column === 'two' ? <FrownTwoTone />  :  <EditTwoTone />}
                     <Input style={{padding: '10px'}}
                         variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : comment3}
-                        onChange={(e) => {
-                            if (column === 'one') {
-                                setComment1(e.target.value)
-                            } else if (column === 'two') {
-                                setComment2(e.target.value)
-                            } else {
-                                setComment3(e.target.value)
-                            }
-                        }}
+                        onChange={handleInputChange}
                         onKeyDown={handleKeyEnter}
-                       
                         placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : 'I want to ask about...'}
                     />
                     </Flex>
