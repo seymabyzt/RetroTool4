@@ -23,3 +23,12 @@ export interface CommentListState {
     commentList3: Comment[],
     commentList4: Comment[]
 }
+
+export interface CommentItemProps {
+    comment: Comment,
+    userID: string,
+    step: number,
+    column: string,
+    deleteCommentAndNotify: (commentID: string) => void
+    handleIncrementLike: (commentID: string) => void
+}
