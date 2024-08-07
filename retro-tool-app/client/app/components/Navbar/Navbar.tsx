@@ -8,10 +8,10 @@ const Navbar = ({ step, setStep }: { step: number, setStep: any }) => {
   const boxStyle: React.CSSProperties = {
     width: '100%',
     height: 60,
-    borderBottom: '1px solid #40a9ff',
+    borderBottom: '1px solid #9BB0C1',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: 15,
     background: '#f0f5ff'
   }
 

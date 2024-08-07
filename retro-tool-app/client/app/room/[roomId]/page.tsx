@@ -41,17 +41,17 @@ const page = ({ params }: any) => {
       <Toaster />
       <Navbar step={step} setStep={handleStepChange} />
       {roomID &&
-        <Row>
-          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '20px', border: "1px solid black" }}>
+        <Row style={{ padding: "15px" }}>
+          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', minHeight: '90vh', padding: '20px', border: "1px solid #9BB0C1" }}>
             <Topic step={step} column='one' userID={userID} roomID={roomID} socket={socket} />
           </Col>
-          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '20px', border: "1px solid black" }}>
+          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', minHeight: '90vh', padding: '20px', border: "1px solid #9BB0C1" }}>
             <Topic step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
           </Col>
-          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '20px', border: "1px solid black" }}>
+          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', minHeight: '90vh', padding: '20px', border: "1px solid #9BB0C1" }}>
             <Topic step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
           </Col>
-          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', height: '90vh', padding: '20px', border: "1px solid black" }}>
+          <Col xs={12} md={6} style={{ backgroundColor: '#f0f5ff', minHeight: '90vh', padding: '20px', border: "1px solid #9BB0C1" }}>
             <Topic step={step} column='four' userID={userID} roomID={roomID} socket={socket} />
           </Col>
         </Row>
