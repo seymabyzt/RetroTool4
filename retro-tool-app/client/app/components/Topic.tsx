@@ -9,9 +9,38 @@ import { SmileTwoTone, FrownTwoTone, EditTwoTone, CheckCircleOutlined } from '@a
 import { Input, Flex } from "antd"
 import { toast } from "react-hot-toast"
 import CommentItem from "./Atoms/CommentItem"
+import {useDrop} from 'react-dnd'
+import { useRef } from 'react'
 
 const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
-    const dispatch = useAppDispatch()
+
+  const ref= useRef<HTMLDivElement>(null);
+    const[, dropRef] = useDrop({
+        accept: 'COMMENT_ITEM',
+        drop: (item) => {
+            console.log("dropped item:", item);
+            moveItemToNewLocation(item.comment);
+        }
+      });
+      const dispatch= useAppDispatch();
+      const  moveItemToNewLocation = async (item: any) => {
+        console.log(item);
+        const commentContent: Comment = {
+            userID: item.userID,
+            comment: item.comment,
+            roomID: item.roomID,
+            column: column,
+            date: item.date,
+            commentID: uuidv4(),
+            likeCount: item.likeCount,
+            likedByUsers: item.likedByUsers
+        }
+
+        await socket.emit("commentContent", commentContent)
+
+        dispatch(addComment(commentContent))
+        deleteCommentAndNotify(item.commentID,true)
+      }
 
     const commentList1 = useAppSelector((state) => state.commentList.commentList1)
     const commentList2 = useAppSelector((state) => state.commentList.commentList2)
@@ -85,10 +114,11 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         }
     }
 
-    const deleteCommentAndNotify = async (commentID: string) => {
+    const deleteCommentAndNotify = async (commentID: string, hideAlert: boolean) => {
         dispatch(deleteComment(commentID))
         await socket.emit("deleteComment", { commentID, roomID })
-        toast.success("Comment is deleted!")
+        if(!hideAlert)
+            toast.success("Comment is deleted!")
     }
 
     const handleKeyEnter = (e: any) => {
@@ -132,8 +162,9 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                     </Flex>
                 </form>
 
-                <div>
+                <div ref={dropRef} key={Math.random() * 10000} style={{minHeight:"300px"}}>
                     {commentList.map((comment, index) => (
+
                         <CommentItem
                             key={index}
                             comment={comment}
@@ -143,6 +174,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                             deleteCommentAndNotify={deleteCommentAndNotify}
                             handleIncrementLike={handleIncrementLike}
                         />
+
                     ))}
                 </div>
             </div>

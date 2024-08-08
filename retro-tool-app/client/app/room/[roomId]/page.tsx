@@ -9,6 +9,8 @@ import { Row, Col } from 'antd'
 import { Toaster } from "react-hot-toast"
 import styles from '@/app/room/retrotool.module.css'
 import { darknavy } from "@/app/ThemesColor/ThemesColor"
+import { DndProvider } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 
 const socket: Socket = io("http://localhost:8000")
 
@@ -39,6 +41,7 @@ const page = ({ params }: any) => {
   const [step, setStep] = useState(1)
 
   return (
+    <DndProvider backend={HTML5Backend}>
     <div className={styles.roomPage} style={{backgroundColor: darknavy}}>
       <Toaster />
       <Navbar step={step} setStep={handleStepChange} />
@@ -59,6 +62,7 @@ const page = ({ params }: any) => {
         </Row>
       }
     </div>
+    </DndProvider>
   )
 }
 export default page
