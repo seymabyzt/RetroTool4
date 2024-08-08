@@ -127,7 +127,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                             variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
                             onChange={handleInputChange}
                             onKeyDown={handleKeyEnter}
-                            placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : column == 'three' ? 'I want to ask about...' : 'We need to do...'}
+                            placeholder={column == 'one' ? 'It worked well that...' : column == 'two' ? 'We could improve...' : column == 'three' ? 'I want to ask about...' : 'Actions'}
                         />
                     </Flex>
                 </form>

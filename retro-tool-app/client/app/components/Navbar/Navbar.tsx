@@ -9,14 +9,16 @@ const Navbar = ({ step, setStep }: { step: number, setStep: any }) => {
     width: '100%',
     height: 60,
     borderBottom: '1px solid #9BB0C1',
+    borderRadius: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
+    margin: 15,
     background: '#f0f5ff'
   }
 
   return (
-    <Flex gap="middle" align="start" vertical>
+    <Flex gap="middle" >
       <Flex style={boxStyle}>
         <Title level={4}>RetroTool4</Title>
         <ExportPdf step={step} setStep={setStep} />

@@ -11,7 +11,7 @@ const StepButton = ({ step, setStep, exportPdfFunc }: { step: number, setStep: a
     const btnStyle: React.CSSProperties = {
         color: '#fff',
         fontWeight: "bold",
-        backgroundColor: isDisabledButton ? '#d9d9d9' : '#364d79',
+        backgroundColor: isDisabledButton ? '#d9d9d9' : '#eb2f96',
     }
 
     const commentList1 = useAppSelector((state) => state.commentList.commentList1)

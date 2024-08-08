@@ -1,0 +1,15 @@
+.main {
+    background-image: linear-gradient( rgb(41, 41, 83) , rgb(185, 186, 208));
+    min-height: 100vh;
+    display: flex;
+    
+}
+.container{
+    max-width: 1140px;
+    margin: 100px auto
+}
+.content{
+    margin-top: 100px;
+    display: flex;
+    gap: 100px;
+}

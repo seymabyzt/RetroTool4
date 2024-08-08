@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Retro Tool 4",
   description: "Retro Tool 4",
+  
 };
 
 export default function RootLayout({
