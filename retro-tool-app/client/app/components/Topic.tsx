@@ -12,7 +12,7 @@ import CommentItem from "./Atoms/CommentItem"
 import { useDrop } from 'react-dnd'
 import { useRef } from 'react'
 
-const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
+const Topic = ({isAdmin, step, column, userID, roomID, socket }: TopicProps) => {
 
     const ref = useRef<HTMLDivElement>(null);
     const [, dropRef] = useDrop({
@@ -53,6 +53,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
     const [comment4, setComment4] = useState("")
     const [isDisabledInput, setIsDisabledInput] = useState(true)
 
+
     useEffect(() => {
         const handleNewComment = (data: Comment) => {
             dispatch(addComment(data))
@@ -66,6 +67,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
             dispatch(incrementLikeCount({ commentID, column, userID }));
         }
 
+
         socket.on("commentReturn", handleNewComment)
         socket.on("commentDeleted", handleDeleteComment)
         socket.on("likeCountUpdated", handleIncrementLikeCount)
@@ -74,6 +76,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
             socket.off("commentReturn", handleNewComment)
             socket.off("commentDeleted", handleDeleteComment)
             socket.off("likeCountUpdated", handleIncrementLikeCount)
+       
         }
     }, [socket, dispatch])
 
@@ -162,11 +165,12 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                     </Flex>
                 </form>
 
-                <div ref={column != "four" ? dropRef : null} key={Math.random() * 10000} style={{ minHeight: "300px" }}>
+                <div ref= { dropRef } key={Math.random() * 10000} style={{ minHeight: "300px" }}>
                     {commentList.map((comment, index) => (
 
                         <CommentItem
-                            key={index}
+                        key={index}
+                        isAdmin={isAdmin}
                             comment={comment}
                             userID={userID}
                             step={step}

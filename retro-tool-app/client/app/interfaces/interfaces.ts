@@ -3,7 +3,8 @@ export interface TopicProps {
     userID: string,
     roomID: string,
     socket: any,
-    column: string
+    column: string,
+    isAdmin: boolean
 }
 
 export interface Comment {
@@ -30,5 +31,6 @@ export interface CommentItemProps {
     step: number,
     column: string,
     deleteCommentAndNotify: (commentID: string) => void
-    handleIncrementLike: (commentID: string) => void
+    handleIncrementLike: (commentID: string) => void,
+    isAdmin: boolean
 }
