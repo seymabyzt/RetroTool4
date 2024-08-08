@@ -9,21 +9,21 @@ import { SmileTwoTone, FrownTwoTone, EditTwoTone, CheckCircleOutlined } from '@a
 import { Input, Flex } from "antd"
 import { toast } from "react-hot-toast"
 import CommentItem from "./Atoms/CommentItem"
-import {useDrop} from 'react-dnd'
+import { useDrop } from 'react-dnd'
 import { useRef } from 'react'
 
 const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
 
-  const ref= useRef<HTMLDivElement>(null);
-    const[, dropRef] = useDrop({
+    const ref = useRef<HTMLDivElement>(null);
+    const [, dropRef] = useDrop({
         accept: 'COMMENT_ITEM',
         drop: (item) => {
             console.log("dropped item:", item);
             moveItemToNewLocation(item.comment);
         }
-      });
-      const dispatch= useAppDispatch();
-      const  moveItemToNewLocation = async (item: any) => {
+    });
+    const dispatch = useAppDispatch();
+    const moveItemToNewLocation = async (item: any) => {
         console.log(item);
         const commentContent: Comment = {
             userID: item.userID,
@@ -39,8 +39,8 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
         await socket.emit("commentContent", commentContent)
 
         dispatch(addComment(commentContent))
-        deleteCommentAndNotify(item.commentID,true)
-      }
+        deleteCommentAndNotify(item.commentID, true)
+    }
 
     const commentList1 = useAppSelector((state) => state.commentList.commentList1)
     const commentList2 = useAppSelector((state) => state.commentList.commentList2)
@@ -117,7 +117,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
     const deleteCommentAndNotify = async (commentID: string, hideAlert: boolean) => {
         dispatch(deleteComment(commentID))
         await socket.emit("deleteComment", { commentID, roomID })
-        if(!hideAlert)
+        if (!hideAlert)
             toast.success("Comment is deleted!")
     }
 
@@ -162,7 +162,7 @@ const Topic = ({ step, column, userID, roomID, socket }: TopicProps) => {
                     </Flex>
                 </form>
 
-                <div ref={dropRef} key={Math.random() * 10000} style={{minHeight:"300px"}}>
+                <div ref={column != "four" ? dropRef : null} key={Math.random() * 10000} style={{ minHeight: "300px" }}>
                     {commentList.map((comment, index) => (
 
                         <CommentItem
