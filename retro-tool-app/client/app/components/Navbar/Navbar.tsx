@@ -21,7 +21,7 @@ const Navbar = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmi
   return (
     <Flex gap="middle" >
       <Flex style={boxStyle}>
-       <Image alt='logo' src={logo} width={80} height={50}></Image>
+       <Image alt='logo' src={logo} width={95} height={50}></Image>
         <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
       </Flex>
     </Flex>
