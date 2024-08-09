@@ -60,12 +60,18 @@ const CommentItem = ({ isAdmin, comment, userID, step, column, deleteCommentAndN
 
   const [, dropRef] = useDrop({
     accept: 'COMMENT_ITEM',
-    drop: (droppedItem) => ({
-      commentID: comment.commentID
-    }),
+    drop: (droppedItem) => {
+    
+      if (droppedItem.comment.commentID !== comment.commentID) {
+        return {
+          commentID: comment.commentID,
+        };
+      }
+      return null;
+    },
   });
 
-  dragRef(dropRef(ref)); // Drag ve drop referanslarını birleştir
+  dragRef(dropRef(ref)); 
 
   return (
     <div ref={ref} style={{ margin: "10px 0", cursor: ((step === 2 || step === 3) && isAdmin) ? "grabbing" : "default" }}>
