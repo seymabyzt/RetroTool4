@@ -4,7 +4,7 @@ import { useAppSelector } from '@/app/redux/store/store'
 import ListMap from './ListMap'
 import StepButton from './StepButton'
 
-const ExportPdf = ({ step, setStep }: { step: number, setStep: any }) => {
+const ExportPdf = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmin: boolean }) => {
 
     const { toPDF, targetRef } = usePDF({ filename: 'RetroTool.pdf' })
 
@@ -19,7 +19,7 @@ const ExportPdf = ({ step, setStep }: { step: number, setStep: any }) => {
 
     return (
         <div>
-            <StepButton step={step} setStep={setStep} exportPdfFunc={handleExportPdf} />
+            <StepButton step={step} setStep={setStep} exportPdfFunc={handleExportPdf} isAdmin={isAdmin} />
             <div ref={targetRef} style={{ position: 'absolute', left: '-9999px' }}>
                 <h1 style={{ marginBottom: "20px", textAlign: "center" }}>RetroTool</h1>
                 <ListMap list={commentList1} />

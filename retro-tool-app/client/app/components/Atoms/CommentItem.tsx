@@ -5,14 +5,14 @@ import { Flex, Card } from 'antd'
 import { useDrag } from 'react-dnd'
 import { useRef } from 'react'
 
-const CommentItem = ({isAdmin, comment, userID, step, column, deleteCommentAndNotify, handleIncrementLike }: CommentItemProps) => {
+const CommentItem = ({ isAdmin, comment, userID, step, column, deleteCommentAndNotify, handleIncrementLike }: CommentItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [, dragRef] = useDrag({
     type: 'COMMENT_ITEM',
     item: { comment, column },
   });
   return (
-    <div ref={((step === 2 || step === 3) && isAdmin) ? dragRef : null} style={{ margin: "10px 0", cursor: (step === 2 || step === 3) ? "grabbing"  : "default" }}>
+    <div ref={((step === 2 || step === 3) && isAdmin) ? dragRef : null} style={{ margin: "10px 0", cursor: ((step === 2 || step === 3) && isAdmin) ? "grabbing" : "default" }}>
       <Card>
         <Flex justify="space-between" align="center">
           <Flex gap={5} style={{ width: "80%", whiteSpace: "wrap", wordBreak: "break-word" }}>

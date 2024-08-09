@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "antd"
 import { useAppSelector } from "@/app/redux/store/store"
 
-const StepButton = ({ step, setStep, exportPdfFunc }: { step: number, setStep: any, exportPdfFunc: any }) => {
+const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, setStep: any, exportPdfFunc: any, isAdmin: boolean }) => {
 
     const [isDisabledButton, setIsDisabledButton] = useState(true)
 
@@ -19,7 +19,7 @@ const StepButton = ({ step, setStep, exportPdfFunc }: { step: number, setStep: a
     const commentList3 = useAppSelector((state) => state.commentList.commentList3)
 
     useEffect(() => {
-        if (commentList1.length > 0 || commentList2.length > 0 || commentList3.length > 0) {
+        if ((commentList1.length > 0 || commentList2.length > 0 || commentList3.length > 0) && isAdmin) {
             setIsDisabledButton(false)
         } else {
             setIsDisabledButton(true)

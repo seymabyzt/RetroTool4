@@ -5,7 +5,7 @@ import Topic from "../../components/Topic";
 import Navbar from "../../components/Navbar/Navbar";
 import { v4 as uuidv4 } from 'uuid';
 import { Row, Col } from 'antd';
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import styles from '@/app/room/retrotool.module.css';
 import { darknavy } from "@/app/ThemesColor/ThemesColor";
 import { DndProvider } from "react-dnd";
@@ -14,10 +14,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 const socket: Socket = io("http://localhost:8000");
 
 const page = ({ params }: any) => {
-
   const roomID = params.roomId;
   const [userID, setUserID] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [adminMessageShown, setAdminMessageShown] = useState<boolean>(false);
 
   useEffect(() => {
     setUserID(uuidv4());
@@ -25,8 +25,10 @@ const page = ({ params }: any) => {
 
     socket.on("adminAssigned", (adminStatus: boolean) => {
       setIsAdmin(adminStatus);
-      if(adminStatus) {
-        console.log("You are the admin");
+
+      if (adminStatus && !adminMessageShown) {
+        toast.success("You are the admin of this room!");
+        setAdminMessageShown(true);
       }
     });
 
@@ -38,7 +40,7 @@ const page = ({ params }: any) => {
       socket.off("stepUpdated");
       socket.off("adminAssigned");
     };
-  }, [roomID]);
+  }, [roomID, adminMessageShown]);
 
   const handleStepChange = (newStep: number) => {
     setStep(newStep);
@@ -57,22 +59,22 @@ const page = ({ params }: any) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={styles.roomPage} style={{backgroundColor: darknavy}}>
+      <div className={styles.roomPage} style={{ backgroundColor: darknavy }}>
         <Toaster />
-        <Navbar step={step} setStep={handleStepChange} />
+        <Navbar step={step} setStep={handleStepChange} isAdmin={isAdmin} />
         {roomID &&
-          <Row style={{ padding: "15px" , borderRadius: '10px' }}>
+          <Row style={{ padding: "15px", borderRadius: '10px' }}>
             <Col xs={12} md={6} style={colStyle}>
               <Topic isAdmin={isAdmin} step={step} column='one' userID={userID} roomID={roomID} socket={socket} />
             </Col>
             <Col xs={12} md={6} style={colStyle}>
-              <Topic isAdmin={isAdmin}  step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
+              <Topic isAdmin={isAdmin} step={step} column='two' userID={userID} roomID={roomID} socket={socket} />
             </Col>
             <Col xs={12} md={6} style={colStyle}>
-              <Topic isAdmin={isAdmin}  step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
+              <Topic isAdmin={isAdmin} step={step} column='three' userID={userID} roomID={roomID} socket={socket} />
             </Col>
             <Col xs={12} md={6} style={colStyle}>
-              <Topic isAdmin={isAdmin}  step={step} column='four' userID={userID} roomID={roomID} socket={socket} />
+              <Topic isAdmin={isAdmin} step={step} column='four' userID={userID} roomID={roomID} socket={socket} />
             </Col>
           </Row>
         }
