@@ -3,32 +3,39 @@ import Link from "next/link"
 import { v4 as uuidv4 } from 'uuid'
 import mypng from '@/app/public/gorsel1.png'
 import styles from '@/app/page.module.css'
-import { Flex} from "antd"
-import Title from "antd/es/typography/Title"
-import StartButton from './components/Atoms/StartButton';
+import { Flex } from "antd"
+import StartButton from './components/Atoms/StartButton'
+import logo from "../app/public/logo.png"
 
 const page = () => {
 
   const id = uuidv4()
-  const flexBoxStyle: React.CSSProperties = {
-    gap: '100px',
-    marginTop: '100px'
-  };
+
+  const pStyle = {
+    color: "white",
+    padding: "20px",
+  }
 
   return (
     <section className={styles.main}>
-      <div className={styles.container}>
-       <Title style={{color: "white"}}>Welcome RetroTool4</Title>
-      <Flex style={flexBoxStyle} >
-        <div>
-          <Title style={{color: "white"}}>Let's Start</Title>
+      <Flex justify="center" align="center" wrap>
+        <Flex justify="center" align="center" vertical>
+          <Image width={230} height={150} src={logo} alt="logo" />
+          <div>
+            <p style={pStyle}>
+              "Elevate your team's performance by launching <br />
+              your first retrospective. <br />
+              Begin your collaborative session instantly <br />
+              no sign-up needed and entirely free."
+            </p>
+            <p style={pStyle}>Feel free to tweak it further if needed!</p>
+          </div>
           <StartButton>
-          <Link href={`/room/${id}`} >Get Start</Link>
+            <Link href={`/room/${id}`} >Get Start</Link>
           </StartButton>
-        </div>
-        <Image src={mypng} alt="" width={500} height={500}></Image>
+        </Flex>
+        <Image style={{ overflow: "hidden" }} src={mypng} alt="" width={500} height={500}></Image>
       </Flex>
-      </div>
     </section>
   )
 }
