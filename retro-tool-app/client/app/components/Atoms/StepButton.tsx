@@ -38,9 +38,9 @@ const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, s
     }
 
     return (
-        <Button  disabled={isDisabledButton} onClick={handleStepIncrement} style={btnStyle}>
-            { step > 3 && <DownloadOutlined />}
-            {step == 1 ? "Group & vote comments" : step == 2 ? "Discuss and add action items" : step == 3 ? 'Finish Retro' : 'Export'}
+        <Button disabled={isDisabledButton} onClick={handleStepIncrement} style={btnStyle}>
+            {step > 3 && <DownloadOutlined />}
+            {step == 1 ? "Pass To Step #2" : step == 2 ? "Pass To Step #3" : step == 3 ? 'Finish Retro' : 'Export'}
         </Button>
     )
 }

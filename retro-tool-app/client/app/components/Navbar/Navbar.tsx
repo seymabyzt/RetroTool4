@@ -14,7 +14,7 @@ const Navbar = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmi
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    margin: 15,
+    margin: "10px 15px 5px 15px",
     background: '#f0f5ff'
   }
 
