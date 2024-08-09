@@ -4,8 +4,8 @@ const StepDescription = ({ step }: { step: number }) => {
         fontSize: "12px",
         textAlign: "center",
         backgroundColor: '#f0f5ff',
-        margin: "0 5px",
-        borderRadius: 10,
+        margin: "5px 23px",
+        borderRadius: 5,
         padding: 3
     }
 

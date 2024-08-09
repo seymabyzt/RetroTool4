@@ -180,13 +180,13 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             setComment4(e.target.value)
         }
     }
-
+    const iconStyle = {fontSize: '25px'}
     return (
         <div style={topicStyle}>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <form onSubmit={(e) => e.preventDefault()}>
                     <Flex style={{ gap: 5 }}>
-                        {column == 'one' ? <SmileTwoTone twoToneColor="#eb2f96" /> : column === 'two' ? <FrownTwoTone twoToneColor="#eb2f96" /> : column === 'three' ? <EditTwoTone twoToneColor="#eb2f96" /> : <CheckCircleOutlined />}
+                        {column == 'one' ? <SmileTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : column === 'two' ? <FrownTwoTone twoToneColor="#eb2f96" style={iconStyle}  /> : column === 'three' ? <EditTwoTone style={iconStyle}  twoToneColor="#eb2f96" /> : <CheckCircleOutlined style={iconStyle} />}
                         <Input disabled={(column == 'four' && step != 3) || step == 4 && isDisabledInput} style={{ padding: '10px' }}
                             variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
                             onChange={handleInputChange}

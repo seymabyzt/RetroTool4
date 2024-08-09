@@ -51,7 +51,7 @@ const page = ({ params }: any) => {
   const [step, setStep] = useState(1);
 
   const colStyle = {
-    padding: '5px',
+    padding: '0 7px',
   }
 
   return (
