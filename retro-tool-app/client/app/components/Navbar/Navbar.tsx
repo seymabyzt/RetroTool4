@@ -1,6 +1,7 @@
 import { Flex, Typography } from 'antd'
 import ExportPdf from '../Atoms/ExportPdf'
-
+import Image from 'next/image'
+import logo from '@/app/public/logo.png'
 const Navbar = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmin: boolean }) => {
 
   const { Title } = Typography
@@ -20,7 +21,7 @@ const Navbar = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmi
   return (
     <Flex gap="middle" >
       <Flex style={boxStyle}>
-        <Title level={4}>RetroTool4</Title>
+       <Image alt='logo' src={logo} width={80} height={50}></Image>
         <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
       </Flex>
     </Flex>

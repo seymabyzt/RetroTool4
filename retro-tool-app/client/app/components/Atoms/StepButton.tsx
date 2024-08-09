@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "antd"
 import { useAppSelector } from "@/app/redux/store/store"
+import { DownloadOutlined } from "@ant-design/icons"
 
 const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, setStep: any, exportPdfFunc: any, isAdmin: boolean }) => {
 
@@ -17,9 +18,10 @@ const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, s
     const commentList1 = useAppSelector((state) => state.commentList.commentList1)
     const commentList2 = useAppSelector((state) => state.commentList.commentList2)
     const commentList3 = useAppSelector((state) => state.commentList.commentList3)
+    const commentList4 = useAppSelector((state) => state.commentList.commentList4)
 
     useEffect(() => {
-        if ((commentList1.length > 0 || commentList2.length > 0 || commentList3.length > 0) && isAdmin) {
+        if ((commentList1.length > 0 || commentList2.length > 0 || commentList3.length > 0 || commentList4.length > 0) && isAdmin) {
             setIsDisabledButton(false)
         } else {
             setIsDisabledButton(true)
@@ -36,7 +38,8 @@ const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, s
     }
 
     return (
-        <Button disabled={isDisabledButton} onClick={handleStepIncrement} style={btnStyle}>
+        <Button  disabled={isDisabledButton} onClick={handleStepIncrement} style={btnStyle}>
+            { step > 3 && <DownloadOutlined />}
             {step == 1 ? "Group & vote comments" : step == 2 ? "Discuss and add action items" : step == 3 ? 'Finish Retro' : 'Export'}
         </Button>
     )

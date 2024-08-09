@@ -74,7 +74,7 @@ const CommentItem = ({ isAdmin, comment, userID, step, column, deleteCommentAndN
   dragRef(dropRef(ref)); 
 
   return (
-    <div ref={ref} style={{ margin: "10px 0", cursor: ((step === 2 || step === 3) && isAdmin) ? "grabbing" : "default" }}>
+    <div ref={((step === 2 || step === 3) && isAdmin) ? ref : null} style={{ margin: "10px 0", cursor: ((step === 2 || step === 3) && isAdmin) ? "grabbing" : "default" }}>
       <Card>
         <Flex justify="space-between" align="center">
           <Flex gap={5} style={{ width: "80%", whiteSpace: "wrap", wordBreak: "break-word" }}>
