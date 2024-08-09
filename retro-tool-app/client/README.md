@@ -1,13 +1,14 @@
-Seyma
-// Bir kullanıcı var olan bir odaya daha sonra katılırsa katılmadan önce yazılan mesajları katıldığında görebilsin. Şuan gözükmüyor.
-
-Hasan
-Admin girişi sağlanacak // if admin 
-Admin tüm mesajları göster diyene kadar paylaşılmıyor inputlara girilen yorumlar gizlenecek. 
+Ekip Çalışması
+Uygulamamızın adı RetroTool4
+Ekip;
+Hasan Yasen
+Şeyma Bayezit
 
 ## Getting Started
 
 First, run the development server:
+
+cd client
 
 ```bash
 npm run dev
@@ -18,15 +19,13 @@ pnpm dev
 # or
 bun dev
 ```
+## Start Server
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+cd server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+npm start
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+server works on 8000 port
 
-## Deploy on Vercel
+(http://localhost:8000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

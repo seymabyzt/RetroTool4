@@ -13,13 +13,14 @@ const page = () => {
 
   const pStyle = {
     color: "white",
-    padding: "20px",
+    padding: "20px 0",
+    fontSize: "24px"
   }
 
   return (
     <section className={styles.main}>
       <Flex justify="center" align="center" wrap>
-        <Flex justify="center" align="center" vertical>
+        <Flex align="flex-start" style={{padding: '10px'}} vertical>
           <Image width={230} height={150} src={logo} alt="logo" />
           <div>
             <p style={pStyle}>
@@ -31,7 +32,7 @@ const page = () => {
             <p style={pStyle}>Feel free to tweak it further if needed!</p>
           </div>
           <StartButton>
-            <Link href={`/room/${id}`} >Get Start</Link>
+            <Link href={`/room/${id}`}>Get Start</Link>
           </StartButton>
         </Flex>
         <Image style={{ overflow: "hidden" }} src={mypng} alt="" width={500} height={500}></Image>

@@ -195,10 +195,8 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                         />
                     </Flex>
                 </form>
-
                 <div ref={dropRef} key={Math.random() * 10000} style={{ minHeight: "300px" }}>
                     {commentList.map((comment, index) => (
-
                         <CommentItem
                             key={index}
                             isAdmin={isAdmin}
@@ -209,7 +207,6 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                             deleteCommentAndNotify={deleteCommentAndNotify}
                             handleIncrementLike={handleIncrementLike}
                         />
-
                     ))}
                 </div>
             </div>
