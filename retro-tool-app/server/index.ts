@@ -54,6 +54,10 @@ io.on("connection", (socket) => {
         io.to(roomID).emit("likeCountUpdated", { commentID, column, userID })
     })
 
+    socket.on("updateCommentContent", ({ roomID, column, updatedComments }) => {
+        io.to(roomID).emit("commentListUpdated", { column, updatedComments })
+    })
+
     socket.on("disconnecting", () => {
         for (const roomID of socket.rooms) {
             const index = rooms[roomID]?.indexOf(socket.id)

@@ -56,10 +56,23 @@ export const commentListsSlice = createSlice({
                     comment.likedByUsers?.push(userID);
                 }
             }
-        }
+        },
+        updateCommentList: (state, action: PayloadAction<{ column: string, updatedComments: Comment[] }>) => {
+            const { column, updatedComments } = action.payload;
+            const listMap: Record<string, keyof CommentListState> = {
+                one: 'commentList1',
+                two: 'commentList2',
+                three: 'commentList3',
+                four: 'commentList4'
+            };
 
+            const listKey = listMap[column];
+            if (listKey) {
+                state[listKey] = updatedComments;
+            }
+        }
     }
 })
 
 export default commentListsSlice.reducer
-export const { addComment, deleteComment, incrementLikeCount } = commentListsSlice.actions
+export const { addComment, deleteComment, incrementLikeCount, updateCommentList } = commentListsSlice.actions
