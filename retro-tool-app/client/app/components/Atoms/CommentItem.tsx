@@ -16,7 +16,7 @@ const CommentItem = ({ isAdmin, comment, userID, step, column, deleteCommentAndN
 
   const [, dropRef] = useDrop({
     accept: 'COMMENT_ITEM',
-    drop: (droppedItem) => {
+    drop: (droppedItem: any) => {
 
       if (droppedItem.comment.commentID !== comment.commentID) {
         return {

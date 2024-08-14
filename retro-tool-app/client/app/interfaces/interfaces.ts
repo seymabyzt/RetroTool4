@@ -30,7 +30,7 @@ export interface CommentItemProps {
     userID: string,
     step: number,
     column: string,
-    deleteCommentAndNotify: (commentID: string) => void
+    deleteCommentAndNotify: (commentID: string, hideAlert: boolean) => void
     handleIncrementLike: (commentID: string) => void,
     isAdmin: boolean
 }

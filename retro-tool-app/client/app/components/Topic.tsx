@@ -21,7 +21,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         backgroundColor: '#f0f5ff'
     }
 
-    const ref = useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement>(null) ;
     const dispatch = useAppDispatch();
 
     const moveItemToNewLocation = async (item: any, targetCommentID?: string) => {
@@ -61,7 +61,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
 
     const [, dropRef] = useDrop({
         accept: 'COMMENT_ITEM',
-        drop: (item, monitor) => {
+        drop: (item: any, monitor: any) => {
             const targetComment = monitor.getDropResult();
             if (targetComment && targetComment.commentID) {
                 moveItemToNewLocation(item.comment, targetComment.commentID);
