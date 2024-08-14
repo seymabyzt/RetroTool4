@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
     });
 })
 
-const port = 'https://retro-tool4.vercel.app' ||  8000
+const port = 'https://retro-tool4.vercel.app'
 
 server.listen(port, () => {
     console.log(`Server is running on port ${port}.`)
