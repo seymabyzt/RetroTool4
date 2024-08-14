@@ -70,11 +70,12 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             }
         },
     });
+    const commentList1 = useAppSelector((state) => state.commentList.commentList1)
+    const commentList2 = useAppSelector((state) => state.commentList.commentList2)
+    const commentList3 = useAppSelector((state) => state.commentList.commentList3)
+    const commentList4 = useAppSelector((state) => state.commentList.commentList4)
 
-    const commentList = column === 'one' ? useAppSelector((state) => state.commentList.commentList1) :
-        column === 'two' ? useAppSelector((state) => state.commentList.commentList2) :
-            column === 'three' ? useAppSelector((state) => state.commentList.commentList3) :
-                useAppSelector((state) => state.commentList.commentList4)
+    const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : column === 'three' ? commentList3 : commentList4
 
     const [comment1, setComment1] = useState("")
     const [comment2, setComment2] = useState("")
@@ -180,13 +181,13 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             setComment4(e.target.value)
         }
     }
-    const iconStyle = {fontSize: '25px'}
+    const iconStyle = { fontSize: '25px' }
     return (
         <div style={topicStyle}>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <form onSubmit={(e) => e.preventDefault()}>
                     <Flex style={{ gap: 5 }}>
-                        {column == 'one' ? <SmileTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : column === 'two' ? <FrownTwoTone twoToneColor="#eb2f96" style={iconStyle}  /> : column === 'three' ? <EditTwoTone style={iconStyle}  twoToneColor="#eb2f96" /> : <CheckCircleOutlined style={iconStyle} />}
+                        {column == 'one' ? <SmileTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : column === 'two' ? <FrownTwoTone twoToneColor="#eb2f96" style={iconStyle} /> : column === 'three' ? <EditTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : <CheckCircleOutlined style={iconStyle} />}
                         <Input disabled={(column == 'four' && step != 3) || step == 4 && isDisabledInput} style={{ padding: '10px' }}
                             variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
                             onChange={handleInputChange}
