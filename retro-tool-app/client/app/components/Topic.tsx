@@ -20,8 +20,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         minHeight: '90vh',
         backgroundColor: '#f0f5ff'
     }
-
-    const ref = useRef<HTMLDivElement>(null) ;
+  
     const dispatch = useAppDispatch();
 
     const moveItemToNewLocation = async (item: any, targetCommentID?: string) => {
@@ -182,6 +181,11 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         }
     }
     const iconStyle = { fontSize: '25px' }
+    const ref = (node: HTMLDivElement | null) => {
+        if (node) {
+          dropRef(node); 
+        }
+      };
     return (
         <div style={topicStyle}>
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -196,7 +200,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                         />
                     </Flex>
                 </form>
-                <div ref={dropRef} key={Math.random() * 10000} style={{ minHeight: "300px" }}>
+                <div ref={ref} key={Math.random() * 10000} style={{ minHeight: "600px" }}>
                     {commentList.map((comment, index) => (
                         <CommentItem
                             key={index}
