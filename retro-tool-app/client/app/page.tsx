@@ -7,9 +7,11 @@ import { Flex } from "antd"
 import StartButton from './components/Atoms/StartButton'
 import logo from "../app/public/logo.png"
 
+var randomstring = require("randomstring");
+
 const Home = () => {
 
-  const id = uuidv4()
+  const id = randomstring.generate();
 
   const pStyle = {
     color: "white",
