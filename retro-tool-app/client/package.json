@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run dev && npm start",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
-
+    "lint": "next lint",
+    "start-all": "npm run dev && npm start"
   },
   "dependencies": {
     "@ant-design/colors": "^7.1.0",
