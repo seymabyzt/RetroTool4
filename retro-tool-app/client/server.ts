@@ -11,7 +11,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
     cors: {
-        origin: "https://retro-tool4.vercel.app/",
+        origin: "https://retro-tool4.vercel.app",
         methods: ["GET", "POST"],
     },
 })
@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
     });
 })
 
-const port = 8000
+const port = 'https://retro-tool4.vercel.app' ||  8000
 
 server.listen(port, () => {
     console.log(`Server is running on port ${port}.`)
