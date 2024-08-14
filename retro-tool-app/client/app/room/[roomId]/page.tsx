@@ -12,7 +12,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import StepDescription from "@/app/components/Atoms/StepDescription";
 
-const socket: Socket = io("https://retro-tool4-gx1n8f34j-seyma-bayezits-projects.vercel.app/");
+const socket: Socket = io("https://retro-tool4.vercel.app/:8000");
 
 const Room = ({ params }: any) => {
   const roomID = params.roomId;

@@ -1,7 +1,8 @@
-import express from "express"
+
 import cors from "cors"
 import http from "http"
 import { Server } from "socket.io"
+import  express  from 'express';
 
 const app = express()
 app.use(cors())
@@ -59,18 +60,22 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnecting", () => {
-        for (const roomID of socket.rooms) {
-            const index = rooms[roomID]?.indexOf(socket.id)
+        const roomIDs = Array.from(socket.rooms);
+    
+        for (const roomID of roomIDs) {
+            const index = rooms[roomID]?.indexOf(socket.id);
             if (index !== -1 && rooms[roomID]) {
-                rooms[roomID].splice(index, 1)
-
-                if (index === 0 && rooms[roomID].length > 0) {
+                rooms[roomID].splice(index, 1);
+             
+                if (rooms[roomID].length === 0) {
+                    delete rooms[roomID];
+                } else if (index === 0) {
                     const newAdminID = rooms[roomID][0];
-                    io.to(newAdminID).emit("adminAssigned", { isAdmin: true })
+                    io.to(newAdminID).emit("adminAssigned", { isAdmin: true });
                 }
             }
         }
-    })
+    });
 })
 
 const port = 8000
@@ -78,3 +83,5 @@ const port = 8000
 server.listen(port, () => {
     console.log(`Server is running on port ${port}.`)
 })
+
+
