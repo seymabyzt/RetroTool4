@@ -12,7 +12,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import StepDescription from "@/app/components/Atoms/StepDescription";
 
-const socket: Socket = io("http://retrotool4server.onrender.com");
+const socket: Socket = io("https://retrotool4server.onrender.com");
 
 const Room = ({ params }: any) => {
   const roomID = params.roomId;
