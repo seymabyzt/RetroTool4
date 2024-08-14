@@ -20,14 +20,14 @@ const Home = () => {
   return (
     <section className={styles.main}>
       <Flex justify="center" align="center" wrap>
-        <Flex align="flex-start" style={{padding: '10px'}} vertical>
+        <Flex align="flex-start" style={{ padding: '10px' }} vertical>
           <Image width={230} height={150} src={logo} alt="logo" />
           <div>
             <p style={pStyle}>
-              "Elevate your team's performance by launching <br />
+              &quot;Elevate your team&apos;s performance by launching <br />
               your first retrospective. <br />
               Begin your collaborative session instantly <br />
-              no sign-up needed and entirely free."
+              no sign-up needed and entirely free.&quot;
             </p>
             <p style={pStyle}>Feel free to tweak it further if needed!</p>
           </div>
