@@ -7,7 +7,7 @@ import { Flex } from "antd"
 import StartButton from './components/Atoms/StartButton'
 import logo from "../app/public/logo.png"
 
-const page = () => {
+const Home = () => {
 
   const id = uuidv4()
 
@@ -41,4 +41,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Home

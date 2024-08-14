@@ -14,7 +14,7 @@ import StepDescription from "@/app/components/Atoms/StepDescription";
 
 const socket: Socket = io("http://localhost:8000");
 
-const page = ({ params }: any) => {
+const Room = ({ params }: any) => {
   const roomID = params.roomId;
   const [userID, setUserID] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -81,4 +81,4 @@ const page = ({ params }: any) => {
   );
 };
 
-export default page;
+export default Room;
