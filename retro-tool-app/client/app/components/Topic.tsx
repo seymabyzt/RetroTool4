@@ -200,7 +200,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                         />
                     </Flex>
                 </form>
-                <div ref={ref} key={Math.random() * 10000} style={{ minHeight: "600px" }}>
+                <div ref={ref} key={Math.random() * 10000} style={{ minHeight: "400px" }}>
                     {commentList.map((comment, index) => (
                         <CommentItem
                             key={index}
