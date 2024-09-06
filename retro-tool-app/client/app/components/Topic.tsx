@@ -139,7 +139,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
 
 
         if(commentList == null || commentList.length == 0){
-            let firebaseComments = [];
+            let firebaseComments: Comment[] = [];
             const docRef = doc(db, roomID, commentListId);
             getDoc(docRef).then((myDoc) => {
                 var commentss = myDoc.data();
