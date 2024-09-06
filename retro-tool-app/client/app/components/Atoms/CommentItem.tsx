@@ -35,23 +35,24 @@ const CommentItem = ({ isAdmin, comment, userID, step, column, deleteCommentAndN
         <Flex justify="space-between" align="center">
           <Flex gap={5} style={{ width: "80%", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
             {userID === comment.userID && step === 1 && (
-              <DeleteTwoTone twoToneColor="#eb2f96" onClick={() => deleteCommentAndNotify(comment.commentID, false)} />
+              <DeleteTwoTone twoToneColor="#eb2f96" onClick={() => deleteCommentAndNotify(comment, false)} />
             )}
-            {step > 1 ? <ul>
-              <li>
-                {step === 1
-                  ? userID === comment.userID ? comment.comment : <HideInput />
-                  : comment.comment
-                }
-              </li>
-            </ul>
-              :
+              {step > 1 ? (
               <>
                 {step === 1
                   ? userID === comment.userID ? comment.comment : <HideInput />
                   : comment.comment
                 }
               </>
+          )
+              : (
+              <>
+                {step === 1
+                  ? userID === comment.userID ? comment.comment : <HideInput />
+                  : comment.comment
+                }
+              </>
+              )
             }
           </Flex>
           <Flex gap={5}>

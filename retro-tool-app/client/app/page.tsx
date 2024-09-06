@@ -14,6 +14,7 @@ const Home = () => {
   }
   
   let id= getRandomNumber(0, 1000000000);
+  
 
   const pStyle = {
     color: "white",
@@ -22,6 +23,7 @@ const Home = () => {
   }
 
   return (
+    <>
     <section className={styles.main}>
       <Flex justify="center" align="center" wrap>
         <Flex align="flex-start" style={{ padding: '10px' }} vertical>
@@ -42,6 +44,7 @@ const Home = () => {
         <Image style={{ overflow: "hidden" }} src={mypng} alt="" width={500} height={500}></Image>
       </Flex>
     </section>
+    </>
   )
 }
 

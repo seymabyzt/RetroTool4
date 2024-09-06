@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, ChangeEvent, useRef } from "react"
+import { useState, useEffect, ChangeEvent, useRef, Key } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
-import { addComment, deleteComment, incrementLikeCount, updateCommentList } from "../redux/slices/commentList/commentListsSlice"
+import { addComment, getComments, deleteComment, incrementLikeCount, updateCommentList } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
 import { v4 as uuidv4 } from 'uuid'
 import { SmileTwoTone, FrownTwoTone, EditTwoTone, CheckCircleOutlined } from '@ant-design/icons'
@@ -10,6 +10,24 @@ import { Input, Flex } from "antd"
 import { toast } from "react-hot-toast"
 import CommentItem from "./Atoms/CommentItem"
 import { useDrop } from 'react-dnd'
+import {
+    addDoc,
+    collection,
+    deleteDoc,
+    deleteField,
+    doc,
+    getFirestore,
+    onSnapshot,
+    setDoc,
+    getDocs,
+    updateDoc,
+    query, where,
+    getDoc,
+    documentId,
+    DocumentData,
+    QuerySnapshot, 
+} from "firebase/firestore";
+import { db } from "../../firebaseConfig"
 
 const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) => {
 
@@ -20,7 +38,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         minHeight: '90vh',
         backgroundColor: '#f0f5ff'
     }
-  
+
     const dispatch = useAppDispatch();
 
     const moveItemToNewLocation = async (item: any, targetCommentID?: string) => {
@@ -34,8 +52,8 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                 }
                 return comment;
             });
-
-            dispatch(updateCommentList({ column, updatedComments: updatedCommentList }));
+            const updateObj ={ roomID:roomID, column: column, updatedComments: updatedCommentList }
+            dispatch(updateCommentList(updateObj));
 
             await socket.emit("updateCommentContent", { roomID, column, updatedComments: updatedCommentList });
 
@@ -55,8 +73,44 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             dispatch(addComment(commentContent));
         }
 
-        deleteCommentAndNotify(item.commentID, true);
+        deleteCommentAndNotify(item, true);
     }
+    // const moveItemOutOfGroup = async (item: any, parentCommentID: string) => {
+    //     // Parent yorumunu bulup içerisinden belirli bir alt yorumu çıkartacağız
+    //     const updatedCommentList = commentList.map(comment => {
+    //         if (comment.commentID === parentCommentID) {
+    //             const splitComments = comment.comment.split('\n');
+    //             const remainingComments = splitComments.filter(c => c !== item.comment);
+
+    //             return {
+    //                 ...comment,
+    //                 comment: remainingComments.join('\n')  // Yorumdan çıkardıktan sonra kalan yorumlar
+    //             };
+    //         }
+    //         return comment;
+    //     });
+
+    //     dispatch(updateCommentList({ column, updatedComments: updatedCommentList }));
+
+    //     await socket.emit("updateCommentContent", { roomID, column, updatedComments: updatedCommentList });
+
+    //     const independentComment: Comment = {
+    //         userID: item.userID,
+    //         comment: item.comment,
+    //         roomID: item.roomID,
+    //         column: column,
+    //         date: item.date,
+    //         commentID: uuidv4(),
+    //         likeCount: item.likeCount,
+    //         likedByUsers: item.likedByUsers
+    //     };
+
+    //     dispatch(addComment(independentComment));
+
+    //     await socket.emit("commentContent", independentComment);
+
+    //     console.log("Yorum başarıyla gruptan çıkarıldı ve bağımsız olarak eklendi.");
+    // };
 
     const [, dropRef] = useDrop({
         accept: 'COMMENT_ITEM',
@@ -68,13 +122,46 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                 moveItemToNewLocation(item.comment);
             }
         },
-    });
-    const commentList1 = useAppSelector((state) => state.commentList.commentList1)
-    const commentList2 = useAppSelector((state) => state.commentList.commentList2)
-    const commentList3 = useAppSelector((state) => state.commentList.commentList3)
-    const commentList4 = useAppSelector((state) => state.commentList.commentList4)
 
-    const commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : column === 'three' ? commentList3 : commentList4
+    });
+    
+    let commentList1 = useAppSelector((state) => state.commentList.commentList1)
+    let commentList2 = useAppSelector((state) => state.commentList.commentList2)
+    let commentList3 = useAppSelector((state) => state.commentList.commentList3)
+    let commentList4 = useAppSelector((state) => state.commentList.commentList4)
+
+    let commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : column === 'three' ? commentList3 : commentList4
+
+   
+      async function getSubCollection() {
+
+        const commentListId = column === 'one' ? "commentList1" : column === 'two' ? "commentList2" : column === 'three' ? "commentList3" : "commentList4"
+
+
+        if(commentList == null || commentList.length == 0){
+            let firebaseComments = [];
+            const docRef = doc(db, roomID, commentListId);
+            getDoc(docRef).then((myDoc) => {
+                var commentss = myDoc.data();
+             if (commentss!= undefined && commentss != null && Array.isArray(commentList))
+             {
+                commentss.comments.forEach((selectedComment:any) =>{
+                    let myComment = selectedComment as Comment;
+                    firebaseComments.push(myComment);
+                })
+                const objs={
+                    column: column, comments: firebaseComments
+                }
+                dispatch(getComments(objs));
+             }
+            });
+             
+      
+        }
+  
+      }
+      
+      getSubCollection();
 
     const [comment1, setComment1] = useState("")
     const [comment2, setComment2] = useState("")
@@ -83,21 +170,26 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
     const [isDisabledInput, setIsDisabledInput] = useState(true)
 
     useEffect(() => {
+
         const handleNewComment = (data: Comment) => {
             dispatch(addComment(data))
         }
 
-        const handleDeleteComment = (commentID: string) => {
+        const handleDeleteComment = (commentID: Comment) => {
             dispatch(deleteComment(commentID))
         }
 
-        const handleIncrementLikeCount = ({ commentID, column, userID }: { commentID: string, column: string, userID: string }) => {
-            dispatch(incrementLikeCount({ commentID, column, userID }));
+        const handleIncrementLikeCount = ({ commentID, column, userID }: {
+             commentID: string, column: string, userID: string }) => {
+                console.log("here222");
+            dispatch(incrementLikeCount({ commentID, column, userID, roomID }));
+
+
         }
 
         const handleUpdatedCommentList = (data: { column: string; updatedComments: Comment[] }) => {
             if (data.column === column) {
-                dispatch(updateCommentList({ column, updatedComments: data.updatedComments }));
+                dispatch(updateCommentList({ roomID: roomID, column, updatedComments: data.updatedComments }));
             }
         };
 
@@ -114,6 +206,26 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         }
     }, [socket, dispatch])
 
+    // useEffect(() => {
+    //     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    //         event.preventDefault();
+    //         event.returnValue = '';
+    //         console.log("Sayfa kapatılıyor, buraya istediğiniz işlemi yapabilirsiniz.");
+    //     };
+    //     const handleUnload = () => {
+    //         alert("Sayfa kapatılıyor, buraya istediğiniz işlemi yapabilirsiniz.");
+    //         //Firebase den roomId sil
+    //     };
+
+    //     window.addEventListener('beforeunload', handleBeforeUnload);
+    //     window.addEventListener('unload', handleUnload);
+
+    //     return () => {
+    //         window.removeEventListener('beforeunload', handleBeforeUnload);
+    //         window.removeEventListener('unload', handleUnload);
+    //     };
+    // }, []);
+
     useEffect(() => {
         if (step === 3) {
             setIsDisabledInput(false)
@@ -123,6 +235,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
     }, [step, column])
 
     const sendComment = async () => {
+
         const currentComment = column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4
 
         const commentContent: Comment = {
@@ -136,9 +249,10 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             likedByUsers: []
         }
 
-        await socket.emit("commentContent", commentContent)
 
+        await socket.emit("commentContent", commentContent);
         dispatch(addComment(commentContent))
+
 
         if (column === 'one') {
             setComment1("")
@@ -151,9 +265,12 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         }
     }
 
-    const deleteCommentAndNotify = async (commentID: string, hideAlert: boolean) => {
-        dispatch(deleteComment(commentID))
-        await socket.emit("deleteComment", { commentID, roomID })
+    const deleteCommentAndNotify = async (comment: Comment, hideAlert: boolean) => {
+        let deletedCommentId = comment.commentID;
+        let deletedCommentRoomId = comment.roomID
+        dispatch(deleteComment(comment))
+        await socket.emit("deleteComment", { deletedCommentId, deletedCommentRoomId })
+
         if (!hideAlert)
             toast.success("Comment is deleted!")
     }
@@ -165,7 +282,9 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
     }
 
     const handleIncrementLike = async (commentID: string) => {
-        dispatch(incrementLikeCount({ commentID, column, userID }));
+
+        dispatch(incrementLikeCount({ commentID, column, userID, roomID }));
+        console.log('sa')
         await socket.emit("likeCount", { commentID, roomID, column, userID });
     }
 
@@ -183,10 +302,11 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
     const iconStyle = { fontSize: '25px' }
     const ref = (node: HTMLDivElement | null) => {
         if (node) {
-          dropRef(node); 
+            dropRef(node);
         }
-      };
+    };
     return (
+        <>
         <div style={topicStyle}>
             <div style={{ display: "flex", flexDirection: "column" }}>
                 <form onSubmit={(e) => e.preventDefault()}>
@@ -201,7 +321,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                     </Flex>
                 </form>
                 <div ref={ref} key={Math.random() * 10000} style={{ minHeight: "400px" }}>
-                    {commentList.map((comment, index) => (
+                    {commentList.map((comment: Comment, index: Key | null | undefined) => (
                         <CommentItem
                             key={index}
                             isAdmin={isAdmin}
@@ -216,6 +336,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                 </div>
             </div>
         </div>
+        </>
     )
 }
 
