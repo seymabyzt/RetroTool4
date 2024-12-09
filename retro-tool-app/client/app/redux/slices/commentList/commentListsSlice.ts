@@ -108,9 +108,9 @@ export const commentListsSlice = createSlice({
             };
 
             const listKey = listMap[column];
-            if (listKey) {
+            
                 state[listKey] = updatedComments;
-            }
+            
 
             var docRef = doc(db, roomID, listKey);
             setDoc(docRef,

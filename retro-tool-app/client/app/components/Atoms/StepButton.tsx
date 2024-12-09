@@ -5,7 +5,7 @@ import { Button } from "antd"
 import { useAppSelector } from "@/app/redux/store/store"
 import { DownloadOutlined } from "@ant-design/icons"
 
-const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, setStep: any, exportPdfFunc: any, isAdmin: boolean }) => {
+const StepButton = ({ step, setStep, exportPdfFunc, isAdmin}: { step: number, setStep: any, exportPdfFunc: any, isAdmin: boolean}) => {
 
     const [isDisabledButton, setIsDisabledButton] = useState(true)
 
@@ -21,7 +21,7 @@ const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, s
     const commentList4 = useAppSelector((state) => state.commentList.commentList4)
 
     useEffect(() => {
-        if ((commentList1.length > 0 || commentList2.length > 0 || commentList3.length > 0 || commentList4.length > 0) && isAdmin) {
+        if ((commentList1.length > 0 || commentList2.length > 0 || commentList3.length > 0 || commentList4.length > 0) && isAdmin == true) {
             setIsDisabledButton(false)
         } else {
             setIsDisabledButton(true)

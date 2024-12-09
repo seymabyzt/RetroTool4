@@ -1,6 +1,4 @@
 import Image from "next/image"
-import Link from "next/link"
-import { v4 as uuidv4 } from 'uuid'
 import mypng from '@/app/public/gorsel1.png'
 import styles from '@/app/page.module.css'
 import { Flex } from "antd"
@@ -8,14 +6,6 @@ import StartButton from './components/Atoms/StartButton'
 import logo from "../app/public/logo.png"
 
 const Home = () => {
-
-  function getRandomNumber(min: number, max: number ) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  
-  let id= getRandomNumber(0, 1000000000);
-  
-
   const pStyle = {
     color: "white",
     padding: "20px 0",
@@ -37,9 +27,7 @@ const Home = () => {
             </p>
             <p style={pStyle}>Feel free to tweak it further if needed!</p>
           </div>
-          <StartButton>
-            <Link href={`/room/${id}`}>Get Start</Link>
-          </StartButton>
+          <StartButton/>
         </Flex>
         <Image style={{ overflow: "hidden" }} src={mypng} alt="" width={500} height={500}></Image>
       </Flex>

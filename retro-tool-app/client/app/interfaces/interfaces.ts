@@ -1,12 +1,13 @@
 export interface TopicProps {
     step: number,
-    userID: string,
     roomID: string,
-    socket: any,
+    socket: any
     column: string,
     isAdmin: boolean
 }
-
+export interface Params {
+    roomId: number;
+}
 export interface Comment {
     userID: string,
     comment: string,
