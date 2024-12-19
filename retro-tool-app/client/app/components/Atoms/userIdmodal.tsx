@@ -4,23 +4,19 @@ import { Button } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { pink } from '@/app/ThemesColor/ThemesColor';
 
-function UserIdmodal() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userName, setUserName] = useState('');
-  const { firstColumn, secondColumn, thirdColumn } = useAppSelector((state) => state.modal.columns);
+interface UserIdModalProps {
+  roomID: string | string[];
+  onClose: () => void; 
+}
 
-  const roomID = useAppSelector((state) => state.modal.roomID);
-  let admin = localStorage.getItem(roomID + "isadmin")
-  useEffect(() => {
-    if (admin === 'false' || admin === undefined) {
-      setIsModalOpen(true);
-    }
-  }, []);
+function UserIdmodal({ roomID, onClose }: UserIdModalProps) {
+  const [userName, setUserName] = useState('');
+  
   const handleNameSubmit = () => {
     if (userName.trim()) {
       localStorage.setItem((roomID + "user"), userName)
       // firebase' e de ekle 
-      setIsModalOpen(false);
+      onClose(); 
     } else {
       alert('Lütfen bir isim girin.');
     }
@@ -44,8 +40,7 @@ function UserIdmodal() {
 
   return (
     <div>
-      {isModalOpen && (
-          <div id="overlay">
+          <div style={overlay}>
         <div style={modalStyle}>
           <h2>Nickname</h2>
        
@@ -65,7 +60,6 @@ function UserIdmodal() {
           onClick={handleNameSubmit}>Join Room </Button>
         </div>
         </div>
-      )}
     </div>
   );
 }
@@ -93,7 +87,7 @@ const inputContentStyles: React.CSSProperties = {
 }
 
 const overlay: React.CSSProperties = {
-  position: 'fixed',
+  position: 'relative',
   top: 0,
   left: 0,
   width: '100%',

@@ -5,9 +5,6 @@ import { pink } from '@/app/ThemesColor/ThemesColor';
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { db } from "@/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
-import { setcolumnsName, setRoomID } from "@/app/redux/slices/modalSlice/modalSlice";
-import { useAppDispatch } from "@/app/redux/store/store";
-import { useDispatch } from "react-redux";
 
 type ModalProps = {
     isOpen: boolean;
@@ -15,18 +12,12 @@ type ModalProps = {
 };
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-    const dispatch = useDispatch();
-    // const modalData = useSelector((state: RootState) => state.modal);
-
+   
     const [roomNameInput, setRoomName] = useState<string>("")
     const [firstColumn1, setfirstColumn1] = useState<string>("")
     const [secondColumn2, setsecondColumn2] = useState<string>("")
     const [thirdColumn3, setthirdColumn3] = useState<string>("")
     let roomName: string = roomNameInput.replace(/\s+/g, '').toLowerCase()
-    // let firstColumn1= firstColumn1Input.replace(/\s+/g,'').toLowerCase()
-    // let secondColumn2 = secondColumn2Input.replace(/\s+/g,'').toLowerCase()
-    // let thirdColumn3 = thirdColumn3Input.replace(/\s+/g,'').toLowerCase()
-    // console.log(roomNameInput)
     if (!isOpen) return null;
 
 
@@ -50,18 +41,25 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        try {
+            const roomRef = doc(db, roomName, 'roomData'); 
+            const roomData = {
+                createdAt: new Date(),
+                roomID: roomNameInput,
+                columns: { 
+                    firstColumn: firstColumn1, 
+                    secondColumn: secondColumn2, 
+                    thirdColumn: thirdColumn3
+                }
+            };
+            await setDoc(roomRef, roomData);
+            localStorage.setItem(roomName, JSON.stringify(roomData));
+            localStorage.setItem((roomName + "isadmin"), 'true');
 
-        dispatch(setcolumnsName({ 
-            roomID: roomName, 
-            columns: { firstColumn: 'New Name', secondColumn: 'Another Name', thirdColumn: 'Third Name' }}));
-
-        dispatch(setRoomID(roomName));
-
+        } catch (error) {
+            console.error("Oda oluşturulurken hata oluştu:", error);
+        }
         window.location.href = `/room/${roomName}`;
-        // setRoomName("");
-        // setthirdColumn3("");
-        // setsecondColumn2("");
-        // setfirstColumn1("")
     };
 
     return (

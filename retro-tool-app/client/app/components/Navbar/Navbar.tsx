@@ -3,7 +3,7 @@ import ExportPdf from '../Atoms/ExportPdf'
 import Image from 'next/image'
 import logo from '@/app/public/logo.png'
 import { useEffect, useState } from 'react'
-const Navbar = ({ step, setStep, isAdmin, roomID }: { step: number, setStep: any, isAdmin: boolean, roomID: any }) => {
+const Navbar = ({ step, setStep, isAdmin, newRoomID }: { step: number, setStep: any, isAdmin: boolean, newRoomID: any }) => {
 
 
   const boxStyle: React.CSSProperties = {
@@ -22,7 +22,7 @@ const Navbar = ({ step, setStep, isAdmin, roomID }: { step: number, setStep: any
     <Flex gap="middle" >  
       <Flex style={boxStyle}>
        <Image alt='logo' src={logo} width={95} height={50}></Image>
-       <div>{roomID}</div>
+       <div> Katıldığınız Oda: {newRoomID}</div>
         <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
       </Flex>
     </Flex>

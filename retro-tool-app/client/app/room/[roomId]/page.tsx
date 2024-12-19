@@ -18,40 +18,65 @@ import {
 } from "firebase/firestore";
 import { addUserToRoom } from "@/app/userInfo";
 import { useRef } from "react";
-// import { useSearchParams } from "next/navigation";
+import { useParams } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from "@/app/redux/store/store";
 import UserIdmodal from "@/app/components/Atoms/userIdmodal";
 
 
 const Room = () => {
   const socket =  io("http://localhost:8000");
-  const roomID = useAppSelector((state) => state.modal.roomID);
-  // const roomID = decodeURIComponent(params.roomId)
+  const [newRoomID, setnewRoomID] = useState();
+  const [columnsName, setColumsName] = useState();
+  const params = useParams();
+  const roomID = params.roomId;
   const [userID, setUserID] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  // const [adminMessageShown, setAdminMessageShown] = useState<boolean>(false);
   const [step, setStep] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const fetchRoomData = async () => {
+    try {
+      const docRef = doc(db, roomID, "roomData"); 
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+          const roomData = docSnap.data();
+          setnewRoomID(roomData.roomID);
+          setColumsName(roomData.columns);
+          console.log("Oda verisi:", roomData); 
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Firestore'dan veri alınırken hata oluştu:", error);
+    }
+  };
 
   useEffect(()=> {
-    socket.on("assignSocketID", (userID) => {
-      setUserID(userID);
-      localStorage.setItem(roomID + "user", userID);
-      // addUserToRoom(roomID, userID, isAdmin);
-    });
+    fetchRoomData();
     if(!roomID) return; 
     socket.emit("roomID", { roomID });
+
     const storedAdminStatus = localStorage.getItem(roomID + "isadmin");
+
     if (storedAdminStatus === "true") {
-      setIsAdmin(true);
-    }
-    socket.on("adminAssigned", (adminStatus) => {
-      if (adminStatus) {
         setIsAdmin(true);
+        socket.emit("adminJoined", { roomID, isAdmin: true });
         toast.success("You are the admin of this room!");
-        console.log("buraya girdi")
-        localStorage.setItem(roomID + "isadmin", "true");
-      }
-    });
+    } else {
+      setIsModalOpen(true);
+    }
+  
+   let userID = localStorage.getItem(roomID + "user");
+   if(userID && roomID) {
+    socket.emit("userJoined", { roomID, userID });
+    setUserID(userID);
+    openModal();
+   }
+
     socket.on("adminRemoved", (data) => {
       if (data.adminRemoved) {
         setIsAdmin(false);
@@ -102,7 +127,7 @@ const Room = () => {
 
   const handleStepChange = (newStep: number) => {
     setStep(newStep);
-    // socket.emit("stepChange", { roomID, newStep });
+   socket.emit("stepChange", { roomID, newStep });
     var docRef = doc(db, roomID, "step");
     setDoc(docRef, { step: newStep });
   };
@@ -114,23 +139,24 @@ const Room = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.roomPage} style={{ backgroundColor: darknavy }}>
-      <UserIdmodal></UserIdmodal>
+      {isModalOpen && (
+      <UserIdmodal onClose={closeModal} roomID={roomID}></UserIdmodal>)}
         <Toaster />
-        <Navbar roomID={roomID} step={step} setStep={handleStepChange} isAdmin={isAdmin} />
+        <Navbar newRoomID={newRoomID} step={step} setStep={handleStepChange} isAdmin={isAdmin} />
         <StepDescription step={step} />
         {roomID &&
           <Row style={{ padding: "5px 15px", borderRadius: '10px' }}>
             <Col xs={24} md={12} lg={6} style={colStyle}>
-              <Topic isAdmin={isAdmin} step={step} column='one' roomID={roomID} socket={socket}/>
+              <Topic isAdmin={isAdmin} step={step} userID={userID} column='one' roomID={roomID} socket={socket} columnsName={columnsName}/>
             </Col>
             <Col xs={24} md={12} lg={6} style={colStyle}>
-              <Topic isAdmin={isAdmin} step={step} column='two'  roomID={roomID} socket={socket} />
+              <Topic isAdmin={isAdmin} step={step} userID={userID} column='two'  roomID={roomID} socket={socket} columnsName={columnsName}/>
             </Col>
             <Col xs={24} md={12} lg={6} style={colStyle}>
-              <Topic isAdmin={isAdmin} step={step} column='three'  roomID={roomID} socket={socket} />
+              <Topic isAdmin={isAdmin} step={step} userID={userID} column='three'  roomID={roomID} socket={socket} columnsName={columnsName}/>
             </Col>
             <Col xs={24} md={12} lg={6} style={colStyle}>
-              <Topic isAdmin={isAdmin} step={step} column='four' roomID={roomID} socket={socket} />
+              <Topic isAdmin={isAdmin} step={step} userID={userID} column='four' roomID={roomID} socket={socket} columnsName={columnsName}/>
             </Col>
           </Row>
         }

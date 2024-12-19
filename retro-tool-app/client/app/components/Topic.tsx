@@ -24,29 +24,25 @@ import {
 import { db } from "../../firebaseConfig"
 import { setcolumnsName } from "../redux/slices/modalSlice/modalSlice"
 
-const Topic = ({ isAdmin, step, column, roomID, socket}: TopicProps) => {
+const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: TopicProps) => {
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        const docRef = doc(db, roomID, "columns");
-        onSnapshot(docRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            dispatch(setcolumnsName({
-                roomID: roomID,
-                columns: data.columns
-              }));
-          } else {
-            console.log("No such document!");
-          }
-        });
-      }, [dispatch]);
-    
-    const firstColumn1 = useAppSelector((state) => state.modal.columns.firstColumn);
-    const secondColumn2 =  useAppSelector((state) => state.modal.columns.secondColumn);
-    const thirdColumn3 =  useAppSelector((state) => state.modal.columns.thirdColumn);
 
-    const userID: string = localStorage.getItem(roomID + "user")
+    // useEffect(() => {
+    //     const docRef = doc(db, roomID, "columns");
+    //     onSnapshot(docRef, (docSnap) => {
+    //       if (docSnap.exists()) {
+    //         const data = docSnap.data();
+    //         dispatch(setcolumnsName({
+    //             roomID: roomID,
+    //             columns: data.columns
+    //           }));
+    //       } else {
+    //         console.log("No such document!");
+    //       }
+    //     });
+    //   }, [dispatch]);
+
 
     const topicStyle = {
         borderRadius: '10px',
@@ -281,12 +277,20 @@ const Topic = ({ isAdmin, step, column, roomID, socket}: TopicProps) => {
                 <form onSubmit={(e) => e.preventDefault()}>
                     <Flex style={{ gap: 5 }}>
                         {column == 'one' ? <SmileTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : column === 'two' ? <FrownTwoTone twoToneColor="#eb2f96" style={iconStyle} /> : column === 'three' ? <EditTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : <CheckCircleOutlined style={iconStyle} />}
-                        <Input disabled={(column == 'four' && step != 3) || step == 4 && isDisabledInput} style={{ padding: '10px' }}
-                            variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyEnter}
-                            placeholder={column == 'one' ? firstColumn1 : column == 'two' ? secondColumn2 : column == 'three' ? thirdColumn3 : 'Actions'}
+                        {columnsName ? (
+                        <Input 
+                        disabled={(column == 'four' && step != 3) || step == 4 && isDisabledInput} 
+                        style={{ padding: '10px' }}
+                        variant="filled" 
+                        value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyEnter}
+                        placeholder={column == 'one' ? columnsName.firstColumn : column == 'two' ? columnsName.secondColumn : column == 'three' ? columnsName.thirdColumn : 'Actions'}
                         />
+                    ) : (
+                        <p>Yükleniyor...</p>
+                      )}
+                      
                     </Flex>
                 </form>
                 <div ref={ref} key={Math.random() * 10000} style={{ minHeight: "400px" }}>
@@ -310,3 +314,7 @@ const Topic = ({ isAdmin, step, column, roomID, socket}: TopicProps) => {
 }
 
 export default Topic
+
+function fetchRoomData() {
+    throw new Error("Function not implemented.")
+}
