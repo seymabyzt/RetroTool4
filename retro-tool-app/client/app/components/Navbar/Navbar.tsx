@@ -2,9 +2,9 @@ import { Flex, Typography } from 'antd'
 import ExportPdf from '../Atoms/ExportPdf'
 import Image from 'next/image'
 import logo from '@/app/public/logo.png'
-import { useEffect, useState } from 'react'
-const Navbar = ({ step, setStep, isAdmin, newRoomID, userCount }: { step: number, setStep: any, isAdmin: boolean, newRoomID: any, userCount: any }) => {
+const Navbar = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmin: boolean }) => {
 
+  const { Title } = Typography
 
   const boxStyle: React.CSSProperties = {
     width: '100%',
@@ -19,11 +19,9 @@ const Navbar = ({ step, setStep, isAdmin, newRoomID, userCount }: { step: number
   }
 
   return (
-    <Flex gap="middle">
+    <Flex gap="middle" >
       <Flex style={boxStyle}>
-        <Image alt='logo' src={logo} width={95} height={50}></Image>
-        <div>Katıldığınız Oda {newRoomID}</div>
-      <div>{userCount}</div>
+       <Image alt='logo' src={logo} width={95} height={50}></Image>
         <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
       </Flex>
     </Flex>

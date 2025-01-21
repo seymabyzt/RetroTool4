@@ -4,7 +4,7 @@ import commentListsSlice from "../slices/commentList/commentListsSlice";
 
 export const store = configureStore({
     reducer: {
-        commentList: commentListsSlice,
+        commentList: commentListsSlice
     }
 })
 

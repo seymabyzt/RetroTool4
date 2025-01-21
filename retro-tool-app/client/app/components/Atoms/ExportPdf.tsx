@@ -6,7 +6,6 @@ import StepButton from './StepButton'
 
 const ExportPdf = ({ step, setStep, isAdmin }: { step: number, setStep: any, isAdmin: boolean }) => {
 
-
     const { toPDF, targetRef } = usePDF({ filename: 'RetroTool.pdf' })
 
     const commentList1: Comment[] = useAppSelector((state) => state.commentList.commentList1)

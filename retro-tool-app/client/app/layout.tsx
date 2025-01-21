@@ -8,6 +8,7 @@ const raleway = Raleway({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Retro Tool 4",
   description: "Retro Tool 4",
+  
 };
 
 export default function RootLayout({
@@ -16,7 +17,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-   
     <html lang="en">
       <body className={raleway.className}>
         <Providers>{children}</Providers>

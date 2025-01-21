@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {  
-  reactStrictMode: false,
+const nextConfig = {  reactStrictMode: true,
     transpilePackages: [
       "antd",
       "rc-util",
@@ -12,10 +11,14 @@ const nextConfig = {
       "rc-tree",
       "rc-table",
     ],
-    webpack: (config) => {
-      config.cache = false;
-      return config;
+    async rewrites() {
+      return [
+        {
+          source: '/server.ts',
+          destination: 'https://retro-tool4.vercel.app',
+        },
+      ];
     },
-  };
+  };;
 
 export default nextConfig;
