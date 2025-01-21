@@ -35,7 +35,7 @@ function UserIdmodal({ roomID, onClose }: UserIdModalProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [userName]);
+  }, []);
 
 
   return (

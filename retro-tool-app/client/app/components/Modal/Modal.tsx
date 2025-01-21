@@ -53,6 +53,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 }
             };
             await setDoc(roomRef, roomData);
+            localStorage.setItem((roomName + 'user'), 'admin');
             localStorage.setItem(roomName, JSON.stringify(roomData));
             localStorage.setItem((roomName + "isadmin"), 'true');
 

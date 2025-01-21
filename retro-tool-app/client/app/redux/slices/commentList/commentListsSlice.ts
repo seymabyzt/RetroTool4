@@ -17,7 +17,6 @@ import {
 import { db } from "../../../../firebaseConfig"
 
 
-
 const initialState: CommentListState = {
     commentList1: [],
     commentList2: [],
@@ -39,6 +38,7 @@ export const commentListsSlice = createSlice({
         }>) => {
             const listKey = listMap[action.payload.column]
             state[listKey] = action.payload.comments;
+            console.log("state", action.payload.comments)
         },
         addComment: (state, action: PayloadAction<Comment>) => {
             const { column, roomID } = action.payload
@@ -51,6 +51,7 @@ export const commentListsSlice = createSlice({
             setDoc(docRef,
                 { comments: state[listKey] }
             );
+            console.log("addComment", state[listKey])
         },
         deleteComment: (state, action: PayloadAction<Comment>) => {
             state.commentList1 = state.commentList1.filter((comment) => comment.commentID !== action.payload.commentID)

@@ -11,7 +11,6 @@ const Home = () => {
     padding: "20px 0",
     fontSize: "24px"
   }
-
   return (
     <>
     <section className={styles.main}>
@@ -20,7 +19,7 @@ const Home = () => {
           <Image width={230} height={150} src={logo} alt="logo" />
           <div>
             <p style={pStyle}>
-              &quot;Elevate your team&apos;s performance by launching <br />
+              Elevate your teams performance by launching <br />
               your first retrospective. <br />
               Begin your collaborative session instantly <br />
               no sign-up needed and entirely free.&quot;

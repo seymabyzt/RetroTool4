@@ -3,7 +3,7 @@ import ExportPdf from '../Atoms/ExportPdf'
 import Image from 'next/image'
 import logo from '@/app/public/logo.png'
 import { useEffect, useState } from 'react'
-const Navbar = ({ step, setStep, isAdmin, newRoomID }: { step: number, setStep: any, isAdmin: boolean, newRoomID: any }) => {
+const Navbar = ({ step, setStep, isAdmin, newRoomID, userCount }: { step: number, setStep: any, isAdmin: boolean, newRoomID: any, userCount: any }) => {
 
 
   const boxStyle: React.CSSProperties = {
@@ -17,12 +17,13 @@ const Navbar = ({ step, setStep, isAdmin, newRoomID }: { step: number, setStep: 
     margin: "10px 23px 5px 23px",
     background: '#f0f5ff'
   }
- 
+
   return (
-    <Flex gap="middle" >  
+    <Flex gap="middle">
       <Flex style={boxStyle}>
-       <Image alt='logo' src={logo} width={95} height={50}></Image>
-       <div> Katıldığınız Oda: {newRoomID}</div>
+        <Image alt='logo' src={logo} width={95} height={50}></Image>
+        <div>Katıldığınız Oda {newRoomID}</div>
+      <div>{userCount}</div>
         <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
       </Flex>
     </Flex>

@@ -6,7 +6,7 @@ const ListMap = ({ list }: { list: Comment[] }) => {
     return (
         <div style={{ margin: "15px 0" }}>
             {list.map((comment, index) => (
-                <li key={index}>- {comment.comment}</li>
+                <span key={index}>- {comment.comment}</span>
             ))}
         </div>
     )

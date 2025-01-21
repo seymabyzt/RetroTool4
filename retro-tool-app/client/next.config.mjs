@@ -12,14 +12,10 @@ const nextConfig = {
       "rc-tree",
       "rc-table",
     ],
-    async rewrites() {
-      return [
-        {
-          source: '/server.ts',
-          destination: 'https://retro-tool4.vercel.app',
-        },
-      ];
+    webpack: (config) => {
+      config.cache = false;
+      return config;
     },
-  };;
+  };
 
 export default nextConfig;

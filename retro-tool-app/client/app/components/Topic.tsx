@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, ChangeEvent, useRef, Key } from "react"
+import { useState, useEffect, ChangeEvent, Key } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
 import { addComment, getComments, deleteComment, incrementLikeCount, updateCommentList } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
@@ -22,28 +22,9 @@ import {
     onSnapshot, 
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig"
-import { setcolumnsName } from "../redux/slices/modalSlice/modalSlice"
 
 const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: TopicProps) => {
     const dispatch = useAppDispatch();
-
-
-    // useEffect(() => {
-    //     const docRef = doc(db, roomID, "columns");
-    //     onSnapshot(docRef, (docSnap) => {
-    //       if (docSnap.exists()) {
-    //         const data = docSnap.data();
-    //         dispatch(setcolumnsName({
-    //             roomID: roomID,
-    //             columns: data.columns
-    //           }));
-    //       } else {
-    //         console.log("No such document!");
-    //       }
-    //     });
-    //   }, [dispatch]);
-
-
     const topicStyle = {
         borderRadius: '10px',
         border: "1px solid #9BB0C1",
@@ -51,8 +32,7 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
         minHeight: '90vh',
         backgroundColor: '#f0f5ff'
     }
-
-
+ 
     const moveItemToNewLocation = async (item: any, targetCommentID?: string) => {
         if (targetCommentID) {
             const updatedCommentList = commentList.map(comment => {
@@ -66,7 +46,7 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
             });
             const updateObj ={ roomID:roomID, column: column, updatedComments: updatedCommentList }
             dispatch(updateCommentList(updateObj));
-            await socket.emit("updateCommentContent", { roomID, column, updatedComments: updatedCommentList });
+            await socket?.emit("updateCommentContent", { roomID, column, updatedComments: updatedCommentList });
 
         } else {
             const commentContent: Comment = {
@@ -80,7 +60,7 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
                 likedByUsers: item.likedByUsers
             };
 
-            await socket.emit("commentContent", commentContent);
+            await socket?.emit("commentContent", commentContent);
             dispatch(addComment(commentContent));
         }
 
@@ -106,15 +86,14 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
     let commentList4 = useAppSelector((state) => state.commentList.commentList4)
 
     let commentList = column === 'one' ? commentList1 : column === 'two' ? commentList2 : column === 'three' ? commentList3 : commentList4
-
+    console.log(commentList)
    
       async function getSubCollection() {
 
         const commentListId = column === 'one' ? "commentList1" : column === 'two' ? "commentList2" : column === 'three' ? "commentList3" : "commentList4"
 
-        useEffect(() => {
+      
             if (commentList == null || commentList.length === 0) {
-                const fetchComments = async () => {
                     let firebaseComments: Comment[] = [];
                     const docRef = doc(db, roomID, commentListId);
                     const myDoc = await getDoc(docRef);
@@ -131,13 +110,6 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
                         dispatch(getComments(objs));
                     }
                 };
-    
-                fetchComments().catch((error) =>
-                    console.error("Error fetching comments:", error)
-                );
-            }
-        }, [commentListId, column, commentList, db, dispatch]);
-  
       }
       
       getSubCollection();
@@ -149,9 +121,9 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
     const [isDisabledInput, setIsDisabledInput] = useState(true)
 
     useEffect(() => {
-
-        const handleNewComment = (data: Comment) => {
-            dispatch(addComment(data))
+        const handleNewComment = (commentContent: Comment) => {
+            console.log(commentContent)
+            dispatch(addComment(commentContent))
         }
 
         const handleDeleteComment = (commentID: Comment) => {
@@ -171,8 +143,8 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
                 dispatch(updateCommentList({ roomID: roomID, column, updatedComments: data.updatedComments }));
             }
         };
-
         socket.on("commentReturn", handleNewComment)
+        console.log('burada')
         socket.on("commentDeleted", handleDeleteComment)
         socket.on("likeCountUpdated", handleIncrementLikeCount)
         socket.on("commentListUpdated", handleUpdatedCommentList)
@@ -183,10 +155,9 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
             socket.off("likeCountUpdated", handleIncrementLikeCount)
             socket.off("commentListUpdated", handleUpdatedCommentList);
         }
-    }, [dispatch])
+    }, [socket, dispatch])
 
   
-
     useEffect(() => {
         if (step === 3) {
             setIsDisabledInput(false)
@@ -196,7 +167,7 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
     }, [step, column])
 
     const sendComment = async () => {
-
+        console.log('3')
         const currentComment = column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4
 
         const commentContent: Comment = {
@@ -210,9 +181,12 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
             likedByUsers: []
         }
 
-
-        await socket.emit("commentContent", commentContent);
+        console.log('4')
+        console.log(socket); 
+        await socket?.emit("commentContent", {commentContent, roomID});
+        console.log('dispatche gönderilecek')
         dispatch(addComment(commentContent))
+        console.log('dispatche gönderildi')
 
 
         if (column === 'one') {
@@ -225,24 +199,21 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
             setComment4("")
         }
     }
-    function capitalizeWords(sentence: string) {
-        return sentence
-          .split(' ')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')
-      }
+  
     const deleteCommentAndNotify = async (comment: Comment, hideAlert: boolean) => {
         let deletedCommentId = comment.commentID;
         let deletedCommentRoomId = comment.roomID
         dispatch(deleteComment(comment))
-        await socket.emit("deleteComment", { deletedCommentId, deletedCommentRoomId })
+        await socket?.emit("deleteComment", { deletedCommentId, deletedCommentRoomId })
 
         if (!hideAlert)
             toast.success("Comment is deleted!")
     }
 
     const handleKeyEnter = (e: any) => {
+        console.log('1')
         if (e.key === 'Enter') {
+            console.log('2')
             sendComment()
         }
     }
@@ -250,7 +221,7 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
 
         dispatch(incrementLikeCount({ commentID, column, userID, roomID }));
         console.log('sa')
-        await socket.emit("likeCount", { commentID, roomID, column, userID });
+        await socket?.emit("likeCount", { commentID, roomID, column, userID });
     }
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -314,7 +285,3 @@ const Topic = ({userID, isAdmin, step, column, roomID, socket, columnsName}: Top
 }
 
 export default Topic
-
-function fetchRoomData() {
-    throw new Error("Function not implemented.")
-}
