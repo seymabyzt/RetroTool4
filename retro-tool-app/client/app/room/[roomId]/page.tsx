@@ -39,7 +39,7 @@ const Room = ({ params }: any) => {
     setUserID(storedUserID);
 
     if (!socket) {
-      socket = io("http://localhost:8000, retrotool4server.railway.internal"); 
+      socket = io("https://retrotool4server-production.up.railway.app/, http://localhost:8000"); 
     }
 
     socket.emit("joinRoom", { roomID, userID: storedUserID });
