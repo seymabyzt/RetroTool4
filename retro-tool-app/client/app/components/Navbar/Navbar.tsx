@@ -44,7 +44,7 @@ const Navbar = ({ step, setStep, isAdmin, roomID, userCount, userList }: { step:
        <Image alt='logo' src={logo} width={95} height={50}></Image>
        <div>Room Name: {roomID}</div>
         <Avatar.Group shape="square">
-          {userList.map((user:any, index) => (
+          {userList.map((user:any, index:any) => (
             <Tooltip key={index}>
               <Avatar
                 style={{ backgroundColor: getColorForUser(user.userID) }}
