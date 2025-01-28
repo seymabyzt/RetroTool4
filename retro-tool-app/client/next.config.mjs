@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {  reactStrictMode: true,
+const nextConfig = {  reactStrictMode: false,
     transpilePackages: [
       "antd",
       "rc-util",

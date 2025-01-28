@@ -11,90 +11,64 @@ import { darknavy } from "@/app/ThemesColor/ThemesColor";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import StepDescription from "@/app/components/Atoms/StepDescription";
-import { collection } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
 import {
-  addDoc,
-  deleteDoc,
-  deleteField,
   doc,
-  getFirestore,
-  onSnapshot,
   setDoc,
-  getDocs,
-  updateDoc,
-  query, where,
-  getDoc,
-  documentId,
-  DocumentData,
-  QuerySnapshot,
 } from "firebase/firestore";
-const socket: Socket = io("https://retrotool4server.onrender.com");
+// const socket: Socket = io(
+//  // "https://retrotool4server.onrender.com", 
+//  "http://localhost:8000"
+// );
+let socket: Socket;
 
 const Room = ({ params }: any) => {
   const roomID = params.roomId;
   const [userID, setUserID] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [adminMessageShown, setAdminMessageShown] = useState<boolean>(false);
+  const [userCount, setUserCount] = useState(1);
+  const [userList, setUserList] = useState([]);
 
   useEffect(() => {
-    let collectionREF = collection(db, roomID);
-    console.log(collectionREF)
-    var userIdOnStorage =localStorage.getItem("user");
-    if (userIdOnStorage ==null || userIdOnStorage == undefined)
-    {
-    const userId = uuidv4();
-    setUserID(userId);
-    localStorage.setItem("user",userId);
-    socket.emit("roomID", { roomID, userID });
-
-  }
-  else{
-    const userId = userIdOnStorage
-    setUserID(userId);
-    socket.emit("roomID", { roomID, userID });
-
-  }
-
-
-  socket.on("adminAssigned", (adminStatus: boolean) => {
-    var isadmin =localStorage.getItem("isadmin");
-    if (isadmin == "true")
-      {
-        adminStatus = true;
-      }
-    setIsAdmin(adminStatus);
-    if (adminStatus && !adminMessageShown) {
-      toast.success("You are the admin of this room!");
-      setAdminMessageShown(true);
-      localStorage.setItem("isadmin","true");
+    let storedUserID = localStorage.getItem("userID");
+    if (!storedUserID) {
+      storedUserID = uuidv4();
+      localStorage.setItem("userID", storedUserID);
     }
-  });
+    setUserID(storedUserID);
 
- 
+    if (!socket) {
+      socket = io("http://localhost:8000"); 
+    }
 
-    socket.on("stepUpdated", (newStep) => {
-      setStep(newStep);
+    socket.emit("joinRoom", { roomID, userID: storedUserID });
+
+    socket.on("adminAssigned", (adminStatus: boolean) => {
+      setIsAdmin(adminStatus);
+      if (adminStatus) {
+        toast.success("You are the admin of this room!");
+      }
     });
 
+    socket.on("userList", (users) => {
+      setUserList(users);
+    });
 
-    const stepDocRef = doc(db, roomID, "step");
-    getDoc(stepDocRef).then((myDoc) => {
-      const selectedStep = myDoc.data();
-      if (selectedStep != null && selectedStep != undefined) {
-        const objs = {
-          roomID: roomID, step: step
-        }
-        setStep(selectedStep.step);
-      }
-    }
-    );
+    socket.on("stepUpdated", (newStep: number) => {
+      setStep(newStep);
+    });
+    socket.on("userCount", (count: number) => {
+      setUserCount(count);
+    });
 
     return () => {
-      socket.off("stepUpdated");
       socket.off("adminAssigned");
+      socket.off("stepUpdated");
+      socket?.off("userCount");
+
     };
-  }, [roomID, adminMessageShown]);
+  }, [roomID]);
 
   const handleStepChange = (newStep: number) => {
     setStep(newStep);
@@ -116,7 +90,8 @@ const Room = ({ params }: any) => {
     <DndProvider backend={HTML5Backend}>
       <div className={styles.roomPage} style={{ backgroundColor: darknavy }}>
         <Toaster />
-        <Navbar step={step} setStep={handleStepChange} isAdmin={isAdmin} />
+        <Navbar userList={userList} userCount={userCount} roomID={roomID} step={step} setStep={handleStepChange} isAdmin={isAdmin}
+        />
         <StepDescription step={step} />
         {roomID &&
           <Row style={{ padding: "5px 15px", borderRadius: '10px' }}>
@@ -141,7 +116,4 @@ const Room = ({ params }: any) => {
 };
 
 export default Room;
-function setDomLoaded(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
 

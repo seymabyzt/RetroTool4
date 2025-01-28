@@ -1,22 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Comment, CommentListState } from '@/app/interfaces/interfaces'
 import {
-    addDoc,
-    collection,
-    deleteDoc,
-    deleteField,
     doc,
-    getFirestore,
-    onSnapshot,
-    setDoc,
-    getDocs,
-    updateDoc,
-    getDoc,
-    query, where,
+    setDoc
 } from "firebase/firestore";
 import { db } from "../../../../firebaseConfig"
-
-
 
 const initialState: CommentListState = {
     commentList1: [],
@@ -53,19 +41,25 @@ export const commentListsSlice = createSlice({
             );
         },
         deleteComment: (state, action: PayloadAction<Comment>) => {
-            state.commentList1 = state.commentList1.filter((comment) => comment.commentID !== action.payload.commentID)
-            state.commentList2 = state.commentList2.filter((comment) => comment.commentID !== action.payload.commentID)
-            state.commentList3 = state.commentList3.filter((comment) => comment.commentID !== action.payload.commentID)
-            state.commentList4 = state.commentList4.filter((comment) => comment.commentID !== action.payload.commentID)
-
-            const listKey = listMap[action.payload.column]
-
-            var docRef = doc(db, action.payload.roomID, listKey);
-            setDoc(docRef,
-                { comments: state[listKey] }
-            );
-
-
+            console.log("deleteComment Payload:", action.payload.roomID);
+            const { roomID, column, commentID } = action.payload;
+            state.commentList1 = state.commentList1.filter((c) => c.commentID !== commentID)
+            state.commentList2 = state.commentList2.filter((c) => c.commentID !== commentID)
+            state.commentList3 = state.commentList3.filter((c) => c.commentID !== commentID)
+            state.commentList4 = state.commentList4.filter((c) => c.commentID !== commentID)
+           
+            const listKey = listMap[column]
+            if (!roomID) {
+                console.warn("RoomID is empty, skipping Firestore doc update.");
+                return;
+              }
+              if (!listKey) {
+                console.warn("listKey is empty, skipping Firestore doc update.");
+                return;
+              }
+              
+              var docRef = doc(db, roomID, listKey);
+              setDoc(docRef, { comments: state[listKey] });
         },
         incrementLikeCount(state, action: PayloadAction<{
             [x: string]: any; commentID: string, column: string, userID: string, roomID: string
@@ -106,18 +100,25 @@ export const commentListsSlice = createSlice({
                 three: 'commentList3',
                 four: 'commentList4'
             };
-
+           
             const listKey = listMap[column];
             if (listKey) {
                 state[listKey] = updatedComments;
             }
+            if (!roomID) {
+                console.warn("RoomID is empty, skipping Firestore doc update.");
+                return;
+              }
+            if (!listKey) {
+                console.warn("listKey is empty, skipping Firestore doc update.");
+                return;
+              }
+              state[listKey] = updatedComments.filter(comment => comment !== undefined && comment.comment.trim() !== '');
 
-            var docRef = doc(db, roomID, listKey);
-            setDoc(docRef,
-                { comments: state[listKey] }
-            );
-
-
+              const docRef = doc(db, roomID, listKey);
+              setDoc(docRef, { comments: state[listKey] }).catch(error => {
+                console.error("Firestore update failed:", error);
+              });
         }
     }
 })
