@@ -29,6 +29,10 @@ const Room = ({ params }: any) => {
   const [adminMessageShown, setAdminMessageShown] = useState<boolean>(false);
   const [userCount, setUserCount] = useState(1);
   const [userList, setUserList] = useState([]);
+  const SERVER_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://retrotool4server.onrender.com"
+    : "http://localhost:8000";
 
   useEffect(() => {
     let storedUserID = localStorage.getItem("userID");
@@ -38,9 +42,9 @@ const Room = ({ params }: any) => {
     }
     setUserID(storedUserID);
 
-    if (!socket) {
-      socket = io("https://retrotool4server-production.up.railway.app/"); 
-    }
+   if (!socket) {
+    socket = io(SERVER_URL);
+}
 
     socket.emit("joinRoom", { roomID, userID: storedUserID });
 
