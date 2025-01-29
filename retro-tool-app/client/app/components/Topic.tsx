@@ -88,7 +88,6 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         const commentListId = column === 'one' ? "commentList1" : column === 'two' ? "commentList2" : column === 'three' ? "commentList3" : "commentList4"
 
         if (commentList == null || commentList.length == 0) {
-            console.log('acaba burayamı giriyor')
             let firebaseComments: Comment[] = [];
             const docRef = doc(db, roomID, commentListId);
             getDoc(docRef).then((myDoc) => {

@@ -16,10 +16,6 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
-// const socket: Socket = io(
-//  // "https://retrotool4server.onrender.com", 
-//  "http://localhost:8000"
-// );
 let socket: Socket;
 
 const Room = ({ params }: any) => {
@@ -28,7 +24,8 @@ const Room = ({ params }: any) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [adminMessageShown, setAdminMessageShown] = useState<boolean>(false);
   const [userCount, setUserCount] = useState(1);
-  const [userList, setUserList] = useState([]);
+  const [userList, setUserList] =  useState<any[]>([]);
+
   const SERVER_URL =
   process.env.NODE_ENV === "production"
     ? "https://retrotool4server.onrender.com"
@@ -56,7 +53,7 @@ const Room = ({ params }: any) => {
     });
 
     socket.on("userList", (users) => {
-      setUserList(users);
+      setUserList([...users]); 
     });
 
     socket.on("stepUpdated", (newStep: number) => {
@@ -65,12 +62,22 @@ const Room = ({ params }: any) => {
     socket.on("userCount", (count: number) => {
       setUserCount(count);
     });
+    const handleBeforeUnload = (event: any) => {
+      event.preventDefault();
+      socket.emit("leaveRoom", { roomID, userID: storedUserID });  
+  };
+  
+  window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       socket.off("adminAssigned");
       socket.off("stepUpdated");
       socket?.off("userCount");
+      socket?.off("userList");
+      socket.disconnect();
+      socket.emit("leaveRoom", { roomID, userID: storedUserID });  
 
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [roomID]);
 

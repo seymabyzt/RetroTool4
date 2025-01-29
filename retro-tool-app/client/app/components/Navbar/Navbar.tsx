@@ -1,13 +1,13 @@
-import { Avatar, Flex, Tooltip, Typography } from 'antd'
+import { Avatar, Button, Flex, Tooltip, Typography, Badge } from 'antd'
 import ExportPdf from '../Atoms/ExportPdf'
 import Image from 'next/image'
 import logo from '@/app/public/logo.png'
-import { UserOutlined } from '@ant-design/icons'
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons'
 const Navbar = ({ step, setStep, isAdmin, roomID, userCount, userList }: { step: number, setStep: any, isAdmin: boolean, roomID: any, userCount: number, userList: any }) => {
 
   const colorList = ['#FF9F1C', '#2EC4B6', '#E71D36', '#FF5F5F', '#571089', '#F15BB5', '#00BBF9', '#00F5D4', '#FFA07A', '#FA8072'];
+
   const getColorForUser = (userID: string) => {
-    // Örnek basit hashing ile index hesaplanabilir
     const index = Math.abs(
       userID.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
     ) % colorList.length;
@@ -24,6 +24,11 @@ const Navbar = ({ step, setStep, isAdmin, roomID, userCount, userList }: { step:
     margin: "10px 23px 5px 23px",
     background: '#f0f5ff'
   }
+  const rightSide: React.CSSProperties = {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 10
+  }
   const userCountStyle: React.CSSProperties = {
     fontSize: 10,
     fontWeight: 600,
@@ -38,22 +43,49 @@ const Navbar = ({ step, setStep, isAdmin, roomID, userCount, userList }: { step:
     marginRight: 5
   }
 
+  const btnStyle: React.CSSProperties = {
+    color: '#fff',
+    fontWeight: "bold",
+    backgroundColor: '#eb2f96',
+    cursor: "pointer"
+  }
   return (
-    <Flex gap="middle" >
+    <Flex>
       <Flex style={boxStyle}>
-       <Image alt='logo' src={logo} width={95} height={50}></Image>
-       <div>Room Name: {roomID}</div>
-        <Avatar.Group shape="square">
-          {userList.map((user:any, index:any) => (
-            <Tooltip key={index}>
-              <Avatar
-                style={{ backgroundColor: getColorForUser(user.userID) }}
-                icon={<UserOutlined />}
-              />
-            </Tooltip>
-          ))}
-   </Avatar.Group>
-        <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
+        <Image alt='logo' src={logo} width={95} height={50}></Image>
+        <Flex style={rightSide}>
+          <div>Room Name: {roomID}</div>
+          <div>
+            <Avatar.Group shape="square">
+              {userList.map((user: any, index: number) => (
+                <Tooltip key={index} title="user">
+                  {index === 0 ? (
+                    <Badge count={userCount} offset={[-30, 0]}>
+                      <Avatar
+                        alt="user"
+                        style={{ backgroundColor: getColorForUser(user.userID) }}
+                        icon={<UserOutlined />}
+                      />
+                    </Badge>
+                  ) : (
+                    <Avatar
+                      alt="user"
+                      style={{ backgroundColor: getColorForUser(user.userID) }}
+                      icon={<UserOutlined />}
+                    />
+                  )}
+                </Tooltip>
+              ))}
+            </Avatar.Group>
+          </div>
+          <Tooltip title="Safety Log Out">
+            <Button style={btnStyle}>
+              <LogoutOutlined />
+            </Button>
+          </Tooltip>
+          <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
+        </Flex>
+
       </Flex>
     </Flex>
   )
