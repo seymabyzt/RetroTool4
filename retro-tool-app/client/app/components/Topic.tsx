@@ -2,7 +2,7 @@
 
 import { useState, useEffect, ChangeEvent, useRef, Key } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/store/store"
-import { addComment, getComments, deleteComment, incrementLikeCount, updateCommentList } from "../redux/slices/commentList/commentListsSlice"
+import { addComment, getComments, deleteComment, incrementLikeCount, updateCommentList, groupComments, ungroupComment } from "../redux/slices/commentList/commentListsSlice"
 import { Comment, TopicProps } from "../interfaces/interfaces"
 import { v4 as uuidv4 } from 'uuid'
 import { SmileTwoTone, FrownTwoTone, EditTwoTone, CheckCircleOutlined } from '@ant-design/icons'
@@ -28,40 +28,39 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
 
     const dispatch = useAppDispatch();
 
-    const moveItemToNewLocation = async (item: any, targetCommentID?: string) => {
+    const moveItemToNewLocation = async (draggedItem: Comment, targetCommentID?: string) => {
         if (targetCommentID) {
-            const updatedCommentList = commentList.map(comment => {
-                if (comment.commentID === targetCommentID) {
-                    return {
-                        ...comment,
-                        comment: comment.comment + '\n' + item.comment
-                    };
-                }
-                return comment;
+            dispatch(groupComments({
+                draggedCommentID: draggedItem.commentID,
+                targetCommentID: targetCommentID,
+                column,
+                roomID
+            }));
+            await socket.emit("groupComments", {
+                draggedCommentID: draggedItem.commentID,
+                targetCommentID,
+                column,
+                roomID
             });
-            const updateObj = { roomID: roomID, column: column, updatedComments: updatedCommentList }
-            dispatch(updateCommentList(updateObj));
-
-            await socket.emit("updateCommentContent", { roomID, column, updatedComments: updatedCommentList });
 
         } else {
             const commentContent: Comment = {
-                userID: item.userID,
-                comment: item.comment,
-                roomID: item.roomID,
+                userID: draggedItem.userID,
+                comment: draggedItem.comment,
+                roomID: draggedItem.roomID,
                 column: column,
-                date: item.date,
+                date: draggedItem.date,
                 commentID: uuidv4(),
-                likeCount: item.likeCount,
-                likedByUsers: item.likedByUsers
+                likeCount: draggedItem.likeCount,
+                likedByUsers: draggedItem.likedByUsers
             };
 
-            await socket.emit("commentContent", commentContent);
+            socket.emit("commentContent", commentContent);
             dispatch(addComment(commentContent));
+            deleteCommentAndNotify(draggedItem, true);
         }
-        deleteCommentAndNotify(item, true);
     }
-    
+
     const [, dropRef] = useDrop({
         accept: 'COMMENT_ITEM',
         drop: (item: any, monitor: any) => {
@@ -72,9 +71,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                 moveItemToNewLocation(item.comment);
             }
         },
-
     });
-
     let commentList1 = useAppSelector((state) => state.commentList.commentList1)
     let commentList2 = useAppSelector((state) => state.commentList.commentList2)
     let commentList3 = useAppSelector((state) => state.commentList.commentList3)
@@ -101,19 +98,20 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                         column: column, comments: firebaseComments
                     }
                     dispatch(getComments(objs));
-                } else {    
+                } else {
                     socket?.emit("commentListUpdated", {
-                    roomID,
-                    column,
-                    updatedComments: firebaseComments,
-                  }); }
+                        roomID,
+                        column,
+                        updatedComments: firebaseComments,
+                    });
+                }
             });
         }
     }
 
     useEffect(() => {
-            getSubCollection();
-        }, []);
+        getSubCollection();
+    }, []);
 
     const [comment1, setComment1] = useState("")
     const [comment2, setComment2] = useState("")
@@ -134,7 +132,6 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         const handleIncrementLikeCount = ({ commentID, column, userID }: {
             commentID: string, column: string, userID: string
         }) => {
-            console.log("here222");
             dispatch(incrementLikeCount({ commentID, column, userID, roomID }));
         }
 
@@ -143,17 +140,32 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                 dispatch(updateCommentList({ roomID: roomID, column, updatedComments: data.updatedComments }));
             }
         };
+        const handleGroupComments = (payload: any) => {
+            dispatch(groupComments(payload));
+          };
 
+          const handleUngroupFromSocket = (payload: {
+            commentID: string;
+            column: string;
+            roomID: string;
+          }) => {
+            dispatch(ungroupComment(payload));
+          };
+        
+        socket?.on("ungroupComment", handleUngroupFromSocket);
+        socket?.on("groupComments", handleGroupComments);
         socket?.on("commentReturn", handleNewComment)
         socket?.on("commentDeleted", handleDeleteComment)
         socket?.on("likeCountUpdated", handleIncrementLikeCount)
         socket?.on("commentListUpdated", handleUpdatedCommentList)
 
         return () => {
+            socket?.off("ungroupComment", handleUngroupFromSocket);
             socket?.off("commentReturn", handleNewComment)
             socket?.off("commentDeleted", handleDeleteComment)
             socket?.off("likeCountUpdated", handleIncrementLikeCount)
             socket?.off("commentListUpdated", handleUpdatedCommentList);
+            socket?.off("groupComments", handleGroupComments);
         }
     }, [socket, dispatch])
 
@@ -195,12 +207,12 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
     const deleteCommentAndNotify = (comment: Comment, hideAlert: boolean) => {
         console.log(comment)
         dispatch(deleteComment(comment));
-         socket?.emit("deleteComment", {
-          commentID: comment.commentID,
-          roomID: comment.roomID
+        socket?.emit("deleteComment", {
+            commentID: comment.commentID,
+            roomID: comment.roomID
         });
         if (!hideAlert) toast.success("Comment is deleted!");
-      }
+    }
 
     const handleKeyEnter = (e: any) => {
         if (e.key === 'Enter') {
@@ -231,12 +243,19 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             dropRef(node);
         }
     };
+    const groupedComments = commentList.reduce((acc, c) => {
+        const gid = c.groupId || c.commentID;
+        if(!acc[gid]) acc[gid] = [];
+        acc[gid].push(c);
+        return acc;
+      }, {} as Record<string, Comment[]>);
+      
     return (
         <>
             <div style={topicStyle}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                     <form onSubmit={(e) => e.preventDefault()}>
-                        <Flex style={{ gap: 5 }}>
+                        <Flex style={{ gap: 5 , marginBottom: 10}}>
                             {column == 'one' ? <SmileTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : column === 'two' ? <FrownTwoTone twoToneColor="#eb2f96" style={iconStyle} /> : column === 'three' ? <EditTwoTone style={iconStyle} twoToneColor="#eb2f96" /> : <CheckCircleOutlined style={iconStyle} />}
                             <Input disabled={(column == 'four' && step != 3) || step == 4 && isDisabledInput} style={{ padding: '10px' }}
                                 variant="filled" value={column === 'one' ? comment1 : column === 'two' ? comment2 : column === 'three' ? comment3 : comment4}
@@ -246,18 +265,23 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
                             />
                         </Flex>
                     </form>
-                    <div ref={ref} key={Math.random() * 10000} style={{ minHeight: "400px" }}>
-                        {commentList.map((comment: Comment, index: Key | null | undefined) => (
-                            <CommentItem
-                                key={index}
-                                isAdmin={isAdmin}
-                                comment={comment}
-                                userID={userID}
-                                step={step}
-                                column={column}
-                                deleteCommentAndNotify={deleteCommentAndNotify}
-                                handleIncrementLike={handleIncrementLike}
-                            />
+                    <div ref={ref} style={{ minHeight: "400px" }}>
+                        {Object.entries(groupedComments).map(([groupId, group]) => (
+                            <div key={groupId} style={{ border: '1px dashed #ccc', marginBottom: 8, padding: 8 }}>
+                                {group.map((comment) => (
+                                    <CommentItem
+                                        socket={socket}
+                                        key={comment.commentID}
+                                        isAdmin={isAdmin}
+                                        comment={comment}
+                                        userID={userID}
+                                        step={step}
+                                        column={column}
+                                        deleteCommentAndNotify={deleteCommentAndNotify}
+                                        handleIncrementLike={handleIncrementLike}
+                                    />
+                                ))}
+                            </div>
                         ))}
                     </div>
                 </div>

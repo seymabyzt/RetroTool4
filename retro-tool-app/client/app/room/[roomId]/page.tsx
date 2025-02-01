@@ -14,6 +14,7 @@ import StepDescription from "@/app/components/Atoms/StepDescription";
 import { db } from "@/firebaseConfig";
 import {
   doc,
+  getDoc,
   setDoc,
 } from "firebase/firestore";
 let socket: Socket;
@@ -59,6 +60,7 @@ const Room = ({ params }: any) => {
     socket.on("stepUpdated", (newStep: number) => {
       setStep(newStep);
     });
+
     socket.on("userCount", (count: number) => {
       setUserCount(count);
     });
@@ -66,7 +68,10 @@ const Room = ({ params }: any) => {
       event.preventDefault();
       socket.emit("leaveRoom", { roomID, userID: storedUserID });  
   };
-  
+    
+  if (roomID) {
+    fetchStep();
+  }
   window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
@@ -89,7 +94,20 @@ const Room = ({ params }: any) => {
       { step: newStep }
     );
   };
-
+  const fetchStep = async () => {
+    try {
+      const docRef = doc(db, roomID, "step");
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data && data.step !== undefined) {
+          setStep(data.step); 
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch step from Firestore:", error);
+    }
+  };
   const [step, setStep] = useState(1);
 
   const colStyle = {

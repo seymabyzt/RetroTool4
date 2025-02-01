@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 
 export interface TopicProps {
     step: number,
@@ -16,7 +17,8 @@ export interface Comment {
     date: string,
     commentID: string,
     likeCount: number,
-    likedByUsers?: string[]
+    likedByUsers?: string[],
+    groupId?: string | null;
 }
 
 export interface CommentListState {
@@ -33,5 +35,6 @@ export interface CommentItemProps {
     column: string,
     deleteCommentAndNotify: (commentID: Comment, hideAlert: boolean) => void
     handleIncrementLike: (commentID: string) => void,
-    isAdmin: boolean
+    isAdmin: boolean,
+    socket: Socket
 }

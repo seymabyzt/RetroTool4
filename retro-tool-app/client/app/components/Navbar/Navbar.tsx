@@ -54,7 +54,7 @@ const Navbar = ({ step, setStep, isAdmin, roomID, userCount, userList }: { step:
       <Flex style={boxStyle}>
         <Image alt='logo' src={logo} width={95} height={50}></Image>
         <Flex style={rightSide}>
-          <div>Room Name: {roomID}</div>
+          <div style={{padding: "5px", borderRadius: "5px", color: "#eb2f96"}}>Room: {roomID}</div>
           <div>
             <Avatar.Group shape="square">
               {userList.map((user: any, index: number) => (
@@ -78,14 +78,13 @@ const Navbar = ({ step, setStep, isAdmin, roomID, userCount, userList }: { step:
               ))}
             </Avatar.Group>
           </div>
-          <Tooltip title="Safety Log Out">
-            <Button style={btnStyle}>
+          <Tooltip title="Log Out">
+            <Button style={btnStyle} onClick={() => window.location.href = '/'}>
               <LogoutOutlined />
             </Button>
           </Tooltip>
           <ExportPdf step={step} setStep={setStep} isAdmin={isAdmin} />
         </Flex>
-
       </Flex>
     </Flex>
   )

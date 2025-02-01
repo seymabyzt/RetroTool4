@@ -5,6 +5,7 @@ import {
     setDoc
 } from "firebase/firestore";
 import { db } from "../../../../firebaseConfig"
+import { v4 as uuidv4 } from 'uuid'
 
 const initialState: CommentListState = {
     commentList1: [],
@@ -119,9 +120,64 @@ export const commentListsSlice = createSlice({
               setDoc(docRef, { comments: state[listKey] }).catch(error => {
                 console.error("Firestore update failed:", error);
               });
-        }
+        },
+        groupComments: (state, action: PayloadAction<{
+            draggedCommentID: string;
+            targetCommentID: string;
+            column: string;
+            roomID?: string; 
+        }>) => {
+            const { draggedCommentID, targetCommentID, column, roomID } = action.payload;
+            const listKey = listMap[column];
+
+            if (!listKey) return;
+            const commentList = state[listKey];
+
+            const targetIndex = commentList.findIndex((c) => c.commentID === targetCommentID);
+            const draggedIndex = commentList.findIndex((c) => c.commentID === draggedCommentID);
+
+            if (targetIndex === -1 || draggedIndex === -1) return;
+
+            const targetComment = commentList[targetIndex];
+            const draggedComment = commentList[draggedIndex];
+
+            const groupId = targetComment.groupId || uuidv4();
+
+            targetComment.groupId = groupId;
+            draggedComment.groupId = groupId;
+
+            if (roomID) {
+                const docRef = doc(db, roomID, listKey);
+                setDoc(docRef, { comments: commentList });
+            }
+        },
+
+        ungroupComment: (state, action: PayloadAction<{
+            commentID: string;
+            column: string;
+            roomID?: string;
+        }>) => {
+            const { commentID, column, roomID } = action.payload;
+            const listKey = listMap[column];
+
+            if (!listKey) return;
+
+            const commentList = state[listKey];
+            const idx = commentList.findIndex((c) => c.commentID === commentID);
+            if (idx !== -1) {
+                commentList[idx].groupId = null;
+            }
+
+            if (roomID) {
+                const docRef = doc(db, roomID, listKey);
+                setDoc(docRef, { comments: commentList });
+            }
+        },
     }
 })
 
 export default commentListsSlice.reducer
-export const { addComment, deleteComment, incrementLikeCount, getComments, updateCommentList } = commentListsSlice.actions
+export const { addComment, deleteComment, incrementLikeCount, getComments, updateCommentList,
+    groupComments, 
+    ungroupComment 
+ } = commentListsSlice.actions
