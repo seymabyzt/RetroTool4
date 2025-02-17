@@ -42,7 +42,6 @@ export const commentListsSlice = createSlice({
             );
         },
         deleteComment: (state, action: PayloadAction<Comment>) => {
-            console.log("deleteComment Payload:", action.payload.roomID);
             const { roomID, column, commentID } = action.payload;
             state.commentList1 = state.commentList1.filter((c) => c.commentID !== commentID)
             state.commentList2 = state.commentList2.filter((c) => c.commentID !== commentID)

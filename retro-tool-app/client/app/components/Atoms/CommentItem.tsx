@@ -4,7 +4,7 @@ import HideInput from './HideInput'
 import { CommentItemProps } from '@/app/interfaces/interfaces'
 import { Flex, Card, Button } from 'antd'
 import { useDrag, useDrop } from 'react-dnd'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAppDispatch } from '@/app/redux/store/store'
 import { ungroupComment } from '@/app/redux/slices/commentList/commentListsSlice'
 
@@ -26,7 +26,11 @@ const CommentItem = ({ isAdmin, comment, userID, step, column, socket, deleteCom
   }
   const [, dragRef] = useDrag({
     type: 'COMMENT_ITEM',
+    canDrag: () => (step === 2 || step === 3) && isAdmin,
     item: { comment, column },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
   });
 
   const [, dropRef] = useDrop({
@@ -45,7 +49,7 @@ const CommentItem = ({ isAdmin, comment, userID, step, column, socket, deleteCom
   dragRef(dropRef(ref));
 
   return (
-    <div ref={((step === 2 || step === 3) && isAdmin) ? ref : null} style={{ cursor: ((step === 2 || step === 3) && isAdmin) ? "grabbing" : "default" }}>
+    <div ref={ref} style={{ cursor: ((step === 2 || step === 3) && isAdmin) ? "grabbing" : "default" }}>
       <Card>
         <Flex justify="space-between" align="center">
           <Flex gap={5} style={{ width: "80%", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>

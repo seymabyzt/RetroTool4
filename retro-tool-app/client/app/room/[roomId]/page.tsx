@@ -23,7 +23,6 @@ const Room = ({ params }: any) => {
   const roomID = params.roomId;
   const [userID, setUserID] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [adminMessageShown, setAdminMessageShown] = useState<boolean>(false);
   const [userCount, setUserCount] = useState(1);
   const [userList, setUserList] =  useState<any[]>([]);
 

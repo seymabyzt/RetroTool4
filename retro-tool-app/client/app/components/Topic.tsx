@@ -72,6 +72,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
             }
         },
     });
+
     let commentList1 = useAppSelector((state) => state.commentList.commentList1)
     let commentList2 = useAppSelector((state) => state.commentList.commentList2)
     let commentList3 = useAppSelector((state) => state.commentList.commentList3)
@@ -238,6 +239,7 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
         }
     }
     const iconStyle = { fontSize: '25px' }
+
     const ref = (node: HTMLDivElement | null) => {
         if (node) {
             dropRef(node);

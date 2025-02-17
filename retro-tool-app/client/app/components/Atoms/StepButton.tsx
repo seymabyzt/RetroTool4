@@ -26,7 +26,7 @@ const StepButton = ({ step, setStep, exportPdfFunc, isAdmin }: { step: number, s
         } else {
             setIsDisabledButton(true)
         }
-    }, [commentList1, commentList2, commentList3])
+    }, [commentList1, commentList2, commentList3, isAdmin])
 
     const handleStepIncrement = () => {
         if (step < 4) {
