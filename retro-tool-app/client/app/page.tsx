@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic'
+
 import Image from "next/image"
 import Link from "next/link"
-import { v4 as uuidv4 } from 'uuid'
 import mypng from '@/app/public/gorsel1.png'
 import styles from '@/app/page.module.css'
 import { Flex } from "antd"
