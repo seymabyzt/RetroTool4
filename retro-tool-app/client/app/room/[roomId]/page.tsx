@@ -26,10 +26,12 @@ const Room = ({ params }: any) => {
   const [userCount, setUserCount] = useState(1);
   const [userList, setUserList] =  useState<any[]>([]);
 
-  const SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://retrotool4server.onrender.com"
-    : "http://localhost:8000";
+  // const SERVER_URL =
+  // process.env.NODE_ENV === "production"
+  //   ? "https://retrotool4server.onrender.com"
+  //   : "http://localhost:8000";
+  
+  const SERVER_URL = "https://retrotool4server.onrender.com";
 
   useEffect(() => {
     let storedUserID = localStorage.getItem("userID");
