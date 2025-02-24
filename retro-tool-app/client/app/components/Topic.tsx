@@ -206,7 +206,6 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
     }
 
     const deleteCommentAndNotify = (comment: Comment, hideAlert: boolean) => {
-        console.log(comment)
         dispatch(deleteComment(comment));
         socket?.emit("deleteComment", {
             commentID: comment.commentID,
@@ -223,7 +222,6 @@ const Topic = ({ isAdmin, step, column, userID, roomID, socket }: TopicProps) =>
 
     const handleIncrementLike = async (commentID: string) => {
         dispatch(incrementLikeCount({ commentID, column, userID, roomID }));
-        console.log('sa')
         await socket.emit("likeCount", { commentID, roomID, column, userID });
     }
 
